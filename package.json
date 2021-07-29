@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev src/index.ts"
+    "dev": "ts-node-dev src/index.ts",
+    "watch": "tsc -w",
+    "dev2": "nodemon dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -22,5 +24,8 @@
     "type-graphql": "^1.1.1",
     "typeorm": "^0.2.34",
     "typescript": "^4.3.5"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
   }
 }

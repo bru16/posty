@@ -5,16 +5,14 @@
    "username": "postgres",
    "password": "test",
    "database": "redditclone",
-   "synchronize": true,
+   "synchronize": false,
    "logging": false,
-   "entities": [
-      "src/entity/**/*.ts"
-   ],
+   "entities": ["dist/entity/**/*.js"],
    "migrations": [
-      "src/migration/**/*.ts"
+      "dist/migration/**/*.ts"
    ],
    "subscribers": [
-      "src/subscriber/**/*.ts"
+      "dist/subscriber/**/*.js"
    ],
    "cli": {
       "entitiesDir": "src/entity",
