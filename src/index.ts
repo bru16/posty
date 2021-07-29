@@ -3,6 +3,7 @@ import { ApolloServer } from "apollo-server-express";
 import { createConnection } from "typeorm";
 import { buildSchema } from "type-graphql";
 import { PostResolver } from "./resolvers/post";
+import { UserResolver } from "./resolvers/user";
 import express from "express";
 import cors from "cors";
 
@@ -14,13 +15,12 @@ async function bootstrap() {
     app.use(cors());
     const apolloServer = new ApolloServer({
       schema: await buildSchema({
-        resolvers: [PostResolver],
+        resolvers: [PostResolver, UserResolver],
       }),
       context: () => ({ manager: connection.manager }),
     });
     await apolloServer.start();
     apolloServer.applyMiddleware({ app, cors: false }); // --- /graphql endpoint
-
     const PORT = process.env.PORT || 4000;
     app.listen(4000, () => console.log(`Listening on PORT: ${PORT}`));
   } catch (error) {
