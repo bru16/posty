@@ -29,26 +29,40 @@ class UserResponse {
 }
 Resolver();
 export class UserResolver {
-  @Mutation(() => User)
+  @Mutation(() => UserResponse)
   async register(
     @Arg("username") username: string,
     @Arg("password") password: string,
     @Ctx() { manager }: MyContext
-  ) {
+  ): Promise<UserResponse> {
+    const exists = await manager.findOne(User, {
+      username: username.toLowerCase(),
+    });
+    if (exists) {
+      return {
+        errors: [
+          {
+            field: "username",
+            message: "username is already taken",
+          },
+        ],
+      };
+    }
+
     const hashedPassword = await argon2.hash(password);
     const user = manager.create(User, {
       username: username.toLowerCase(),
       password: hashedPassword,
     });
     await manager.save(user);
-    return user;
+    return { user };
   }
 
   @Mutation(() => UserResponse)
   async login(
     @Arg("username") username: string,
     @Arg("password") password: string,
-    @Ctx() { manager }: MyContext
+    @Ctx() { manager, req }: MyContext
   ): Promise<UserResponse> {
     const user = await manager.findOne(User, {
       username: username.toLowerCase(),
@@ -73,6 +87,8 @@ export class UserResolver {
           },
         ],
       };
+
+    req.session.userId = user.id;
     return { user };
   }
 }
