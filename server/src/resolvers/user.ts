@@ -29,6 +29,14 @@ class UserResponse {
 }
 Resolver();
 export class UserResolver {
+  @Query(() => User, { nullable: true })
+  async me(@Ctx() { req, manager }: MyContext) {
+    if (!req.session.userId) return null;
+
+    const user = await manager.findOne(User, { id: req.session.userId });
+    return user;
+  }
+
   @Mutation(() => UserResponse)
   async register(
     @Arg("username") username: string,
