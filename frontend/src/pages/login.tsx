@@ -1,25 +1,28 @@
-import React from "react";
+import { Container, Button, Box } from "@chakra-ui/react";
 import { Formik, Form } from "formik";
-import { Button, Container } from "@chakra-ui/react";
-import { InputField } from "../components/InputField";
-import { useRegisterMutation } from "../generated/graphql";
-import { toErrorMap } from "../utils/toErrorMap";
 import { useRouter } from "next/dist/client/router";
+import React from "react";
+import { InputField } from "../components/InputField";
+import { useLoginMutation } from "../generated/graphql";
+import { toErrorMap } from "../utils/toErrorMap";
 
-interface registerProps {}
+interface loginProps {}
 
-export const Register: React.FC<registerProps> = ({}) => {
-  const [register, { data, error, loading }] = useRegisterMutation();
+const Login: React.FC<loginProps> = ({}) => {
+  const [login, { data, error, loading }] = useLoginMutation();
   const router = useRouter();
   return (
     <Container mt={20} maxW="400">
+      <Box textAlign="center">
+        <h1>LOGIN</h1>
+      </Box>
       <Formik
         initialValues={{ username: "", password: "" }}
         onSubmit={async (values, actions) => {
-          const response = await register({
+          const response = await login({
             variables: values,
           });
-          const errors = response.data?.register.errors;
+          const errors = response.data?.login.errors;
           if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.
           router.push("/");
         }}
@@ -51,4 +54,5 @@ export const Register: React.FC<registerProps> = ({}) => {
     </Container>
   );
 };
-export default Register;
+
+export default Login;
