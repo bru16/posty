@@ -1,24 +1,27 @@
 import React from "react";
-import { Formik, Form, Field } from "formik";
-import {
-  FormControl,
-  FormLabel,
-  Input,
-  FormErrorMessage,
-  Button,
-  Container,
-} from "@chakra-ui/react";
+import { Formik, Form } from "formik";
+import { Button, Container } from "@chakra-ui/react";
 import { InputField } from "../components/InputField";
+import { useRegisterMutation } from "../generated/graphql";
+import { toErrorMap } from "../utils/toErrorMap";
+import { useRouter } from "next/dist/client/router";
 
 interface registerProps {}
 
 export const Register: React.FC<registerProps> = ({}) => {
+  const [register, { data, error, loading }] = useRegisterMutation();
+  const router = useRouter();
   return (
     <Container mt={20} maxW="400">
       <Formik
         initialValues={{ username: "", password: "" }}
-        onSubmit={(values, actions) => {
-          console.log(values);
+        onSubmit={async (values, actions) => {
+          const response = await register({
+            variables: values,
+          });
+          const errors = response.data.register?.errors;
+          if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.
+          router.push("/");
         }}
       >
         {(props) => (
