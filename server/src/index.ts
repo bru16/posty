@@ -11,13 +11,14 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import { MyContext } from "./types";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core/dist/plugin/landingPage/graphqlPlayground";
+import { COOKIE_NAME } from "./constants";
 
 async function bootstrap() {
+  //sendEmail("bob@bob.com", "hello!");
   try {
     const connection = await createConnection();
     await connection.runMigrations();
     const app = express();
-
     app.use(
       cors({
         origin: "http://localhost:3000",
@@ -30,7 +31,7 @@ async function bootstrap() {
 
     app.use(
       session({
-        name: "qid",
+        name: COOKIE_NAME,
         store: new RedisStore({ client: redisClient, disableTouch: true }),
         saveUninitialized: false,
         secret: "sdad32qd2rd333u73bm7",

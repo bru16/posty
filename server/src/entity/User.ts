@@ -16,6 +16,10 @@ export class User {
 
   @Field()
   @Column({ unique: true })
+  email!: string;
+
+  @Field()
+  @Column({ unique: true })
   username!: string;
 
   @Column()

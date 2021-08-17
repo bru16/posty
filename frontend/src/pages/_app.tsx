@@ -1,13 +1,21 @@
 import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
-import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
+import {
+  ApolloClient,
+  InMemoryCache,
+  ApolloProvider,
+  createHttpLink,
+} from "@apollo/client";
 import theme from "../theme";
 import React from "react";
 import { NavBar } from "../components/NavBar";
 
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql",
+  ssrMode: true,
+  link: createHttpLink({
+    credentials: "include",
+    uri: "http://localhost:4000/graphql",
+  }),
   cache: new InMemoryCache(),
-  credentials: "include",
 });
 
 function MyApp({ Component, pageProps }: any) {
