@@ -10,7 +10,7 @@ import React from "react";
 import { NavBar } from "../components/NavBar";
 
 const client = new ApolloClient({
-  ssrMode: true,
+  //ssrMode: true,
   link: createHttpLink({
     credentials: "include",
     uri: "http://localhost:4000/graphql",

@@ -9,16 +9,14 @@ import { useRouter } from "next/dist/client/router";
 interface registerProps {}
 
 export const Register: React.FC<registerProps> = ({}) => {
-  const [register, { data, error, loading }] = useRegisterMutation();
+  const [register] = useRegisterMutation();
   const router = useRouter();
   return (
     <Container mt={20} maxW="400">
       <Formik
-        initialValues={{ username: "", password: "" }}
+        initialValues={{ email: "", username: "", password: "" }}
         onSubmit={async (values, actions) => {
-          const response = await register({
-            variables: values,
-          });
+          const response = await register({ variables: { options: values } });
           const errors = response.data?.register.errors;
           if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.
           router.push("/");
@@ -26,6 +24,12 @@ export const Register: React.FC<registerProps> = ({}) => {
       >
         {(props) => (
           <Form>
+            <InputField
+              name="email"
+              placeholder="email"
+              label="Email"
+              type="email"
+            />
             <InputField
               name="username"
               placeholder="username"

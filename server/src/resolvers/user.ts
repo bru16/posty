@@ -11,6 +11,8 @@ import { User } from "../entity/User";
 import { MyContext } from "../types";
 import * as argon2 from "argon2";
 import { COOKIE_NAME } from "../constants";
+import { validateRegister } from "../utils/validateRegister";
+import { RegisterInputFields } from "./RegisterInputFields";
 
 @ObjectType()
 class FieldError {
@@ -40,13 +42,11 @@ export class UserResolver {
 
   @Mutation(() => UserResponse)
   async register(
-    @Arg("username") username: string,
-    @Arg("password") password: string,
-    @Arg("email") email: string,
+    @Arg("options") options: RegisterInputFields,
     @Ctx() { manager, req }: MyContext
   ): Promise<UserResponse> {
     const exists = await manager.findOne(User, {
-      username: username.toLowerCase(),
+      username: options.username.toLowerCase(),
     });
     if (exists) {
       return {
@@ -58,22 +58,15 @@ export class UserResolver {
         ],
       };
     }
-
-    if (!email || !username) {
-      return {
-        errors: [
-          {
-            field: "username",
-            message: "username or Email not provided",
-          },
-        ],
-      };
+    const errors = validateRegister(options);
+    if (errors) {
+      return { errors };
     }
 
-    const hashedPassword = await argon2.hash(password);
+    const hashedPassword = await argon2.hash(options.password);
     const user = manager.create(User, {
-      email: email.toLowerCase(),
-      username: username.toLowerCase(),
+      email: options.email.toLowerCase(),
+      username: options.username.toLowerCase(),
       password: hashedPassword,
     });
     await manager.save(user);
@@ -101,7 +94,7 @@ export class UserResolver {
       return {
         errors: [
           {
-            field: "username",
+            field: "usernameOrEmail",
             message: "username or email does not exist",
           },
         ],
