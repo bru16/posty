@@ -10,10 +10,11 @@ import {
 import { User } from "../entity/User";
 import { MyContext } from "../types";
 import * as argon2 from "argon2";
-import { COOKIE_NAME } from "../constants";
+import { COOKIE_NAME, FORGET_PASSWORD_PREFIX } from "../constants";
 import { validateRegister } from "../utils/validateRegister";
 import { RegisterInputFields } from "./RegisterInputFields";
-
+import { v4 } from "uuid";
+import { sendEmail } from "../utils/sendEmail";
 @ObjectType()
 class FieldError {
   @Field()
@@ -48,6 +49,7 @@ export class UserResolver {
     const exists = await manager.findOne(User, {
       username: options.username.toLowerCase(),
     });
+    //check email already exists too, because its unique.
     if (exists) {
       return {
         errors: [
@@ -125,11 +127,27 @@ export class UserResolver {
     }
   }
 
-  /* @Mutation(() => Boolean)
+  @Mutation(() => Boolean)
   async forgotPassword(
-    @Ctx() { manager }: MyContext,
-    @Arg("email") email: string
+    @Arg("email") email: string,
+    @Ctx() { manager, redis }: MyContext
   ) {
-   // const user = await manager.findOne(User, { email });
-  } */
+    const user = await manager.findOne(User, { email });
+    if (!user) {
+      //email doesnt exist
+      return true;
+    }
+    const token = v4();
+    await redis.set(
+      FORGET_PASSWORD_PREFIX + token,
+      user.id,
+      "ex",
+      1000 * 60 * 60 * 24 * 3 //3 days
+    );
+
+    await sendEmail(
+      email,
+      `<a href="http://localhost3000/change-password/${token}">reset password</a>`
+    );
+  }
 }

@@ -6,7 +6,7 @@ import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/user";
 import express from "express";
 import cors from "cors";
-import redis from "redis";
+import Redis from "ioredis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { MyContext } from "./types";
@@ -27,12 +27,12 @@ async function bootstrap() {
     );
 
     const RedisStore = connectRedis(session);
-    const redisClient = redis.createClient();
+    const redis = new Redis();
 
     app.use(
       session({
         name: COOKIE_NAME,
-        store: new RedisStore({ client: redisClient, disableTouch: true }),
+        store: new RedisStore({ client: redis, disableTouch: true }),
         saveUninitialized: false,
         secret: "sdad32qd2rd333u73bm7",
         resave: false,
@@ -52,6 +52,7 @@ async function bootstrap() {
         manager: connection.manager,
         req,
         res,
+        redis
       }),
     });
     await apolloServer.start();
