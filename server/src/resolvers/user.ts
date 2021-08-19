@@ -127,6 +127,52 @@ export class UserResolver {
     }
   }
 
+  @Mutation(() => UserResponse) // user logs in user after successfully changed password.
+  async changePassword(
+    @Arg("token") token: string,
+    @Arg("newPassword") newPassword: string,
+    @Ctx() { redis, req, manager }: MyContext
+  ): Promise<UserResponse> {
+    if (newPassword.length <= 3) {
+      return {
+        errors: [
+          {
+            field: "newPassword",
+            message: "new password must be greater than 3",
+          },
+        ],
+      };
+    }
+    const userId = await redis.get(FORGET_PASSWORD_PREFIX + token);
+    if (!userId) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "token expired",
+          },
+        ],
+      };
+    }
+    const user = await manager.findOne(User, { id: parseInt(userId) });
+    if (!user) {
+      return {
+        errors: [
+          {
+            field: "token",
+            message: "user no longer exists",
+          },
+        ],
+      };
+    }
+    user.password = await argon2.hash(newPassword);
+    await manager.save(User, user);
+
+    //login
+    req.session.userId = user.id;
+    return { user: user };
+  }
+
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg("email") email: string,
@@ -147,7 +193,8 @@ export class UserResolver {
 
     await sendEmail(
       email,
-      `<a href="http://localhost3000/change-password/${token}">reset password</a>`
+      `<a href="http://localhost:3000/change-password/${token}">reset password</a>`
     );
+    return true;
   }
 }
