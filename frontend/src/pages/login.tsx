@@ -9,7 +9,7 @@ import { toErrorMap } from "../utils/toErrorMap";
 interface loginProps {}
 
 const Login: React.FC<loginProps> = ({}) => {
-  const [login, { data, error, loading }] = useLoginMutation();
+  const [login] = useLoginMutation();
   const router = useRouter();
   return (
     <Container mt={20} maxW="400">
