@@ -143,7 +143,8 @@ export class UserResolver {
         ],
       };
     }
-    const userId = await redis.get(FORGET_PASSWORD_PREFIX + token);
+    const key = FORGET_PASSWORD_PREFIX + token;
+    const userId = await redis.get(key);
     if (!userId) {
       return {
         errors: [
@@ -169,6 +170,7 @@ export class UserResolver {
     await manager.save(User, user);
 
     //login
+    await redis.del(key); // deletes token, so its no valid anymore
     req.session.userId = user.id;
     return { user: user };
   }

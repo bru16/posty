@@ -1,15 +1,25 @@
-import { Button, Flex } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  Button,
+  CloseButton,
+  Flex,
+} from "@chakra-ui/react";
 import { Formik, Form } from "formik";
 import { NextPage } from "next";
-import router from "next/dist/client/router";
+import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
 import { InputField } from "../../components/InputField";
 import { useChangePasswordMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
 
 const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
+  const router = useRouter();
   const [changePassword] = useChangePasswordMutation();
   const [tokenError, setTokenError] = useState("");
+
   return (
     <Flex mt={10} justifyContent="center">
       <Formik
@@ -24,7 +34,7 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
           const errors = response.data?.changePassword.errors;
           if (errors) {
             const errorsMapped = toErrorMap(errors);
-            if (token in errorsMapped) setTokenError(errorsMapped.token);
+            if ("token" in errorsMapped) setTokenError(errorsMapped.token);
             return actions.setErrors(errorsMapped);
           }
           router.push("/");
@@ -32,6 +42,18 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
       >
         {(props) => (
           <Form>
+            {tokenError && (
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle mr={10}>Token has expired!</AlertTitle>
+                <CloseButton
+                  onClick={() => setTokenError("")}
+                  position="absolute"
+                  right="8px"
+                  top="8px"
+                />
+              </Alert>
+            )}
             <InputField
               name="newPassword"
               placeholder="new password"
@@ -47,7 +69,6 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
             >
               Change password
             </Button>
-            {tokenError && <h1>{tokenError}</h1>}
           </Form>
         )}
       </Formik>
