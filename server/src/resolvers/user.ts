@@ -34,19 +34,17 @@ class UserResponse {
 Resolver();
 export class UserResolver {
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { req, manager }: MyContext) {
+  async me(@Ctx() { req }: MyContext) {
     if (!req.session.userId) return null;
-
-    const user = await manager.findOne(User, { id: req.session.userId });
-    return user;
+    return await User.findOne(req.session.userId);
   }
 
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: RegisterInputFields,
-    @Ctx() { manager, req }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const exists = await manager.findOne(User, {
+    const exists = await User.findOne({
       username: options.username.toLowerCase(),
     });
     //check email already exists too, because its unique.
@@ -66,12 +64,12 @@ export class UserResolver {
     }
 
     const hashedPassword = await argon2.hash(options.password);
-    const user = manager.create(User, {
+    const user = User.create({
       email: options.email.toLowerCase(),
       username: options.username.toLowerCase(),
       password: hashedPassword,
     });
-    await manager.save(user);
+    await User.save(user);
 
     req.session.userId = user.id;
 
@@ -83,10 +81,9 @@ export class UserResolver {
   async login(
     @Arg("usernameOrEmail") usernameOrEmail: string,
     @Arg("password") password: string,
-    @Ctx() { manager, req }: MyContext
+    @Ctx() { req }: MyContext
   ): Promise<UserResponse> {
-    const user = await manager.findOne(
-      User,
+    const user = await User.findOne(
       usernameOrEmail.includes("@")
         ? { email: usernameOrEmail }
         : { username: usernameOrEmail }
@@ -131,7 +128,7 @@ export class UserResolver {
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
-    @Ctx() { redis, req, manager }: MyContext
+    @Ctx() { redis, req }: MyContext
   ): Promise<UserResponse> {
     if (newPassword.length <= 3) {
       return {
@@ -155,7 +152,7 @@ export class UserResolver {
         ],
       };
     }
-    const user = await manager.findOne(User, { id: parseInt(userId) });
+    const user = await User.findOne({ id: parseInt(userId) });
     if (!user) {
       return {
         errors: [
@@ -167,7 +164,7 @@ export class UserResolver {
       };
     }
     user.password = await argon2.hash(newPassword);
-    await manager.save(User, user);
+    await User.save(user);
 
     //login
     await redis.del(key); // deletes token, so its no valid anymore
@@ -178,9 +175,9 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg("email") email: string,
-    @Ctx() { manager, redis }: MyContext
+    @Ctx() { redis }: MyContext
   ) {
-    const user = await manager.findOne(User, { email });
+    const user = await User.findOne({ email });
     if (!user) {
       //email doesnt exist
       return true;

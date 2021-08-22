@@ -1,52 +1,56 @@
-import { Resolver, Query, Ctx, Arg, Mutation } from "type-graphql";
+import {
+  Resolver,
+  Query,
+  Arg,
+  Mutation,
+  UseMiddleware,
+  Ctx,
+} from "type-graphql";
 import { DeleteResult } from "typeorm";
+import { isAuth } from "../entity/middleware/isAuth";
 import { Post } from "../entity/Post";
 import { MyContext } from "../types";
-
 @Resolver()
 export class PostResolver {
   @Query(() => [Post]) //return array of posts.
-  async posts(@Ctx() { manager }: MyContext): Promise<Post[]> {
-    return await manager.find(Post);
+  async posts(): Promise<Post[]> {
+    return await Post.find(Post);
   }
 
   @Query(() => Post, { nullable: true })
-  async post(
-    @Arg("id") id: number,
-    @Ctx() { manager }: MyContext
-  ): Promise<Post | undefined> {
-    return await manager.findOne(Post, id);
+  async post(@Arg("id") id: number): Promise<Post | undefined> {
+    return await Post.findOne(id);
   }
 
   @Mutation(() => Post)
+  @UseMiddleware(isAuth)
   async createPost(
     @Arg("title") title: string,
-    @Ctx() { manager }: MyContext
+    @Arg("text") text: string,
+    @Ctx() { req }: MyContext
   ): Promise<Post> {
-    const post = manager.create(Post, { title });
-    await manager.save(post);
-    return post;
+    return Post.create({
+      title,
+      text,
+      creatorId: req.session.userId,
+    }).save();
   }
 
   @Mutation(() => Post, { nullable: true })
   async updatePost(
     @Arg("id") id: number,
-    @Arg("title") title: string,
-    @Ctx() { manager }: MyContext
+    @Arg("title") title: string
   ): Promise<Post | null> {
-    const post = await manager.findOne(Post, id);
+    const post = await Post.findOne(id);
     if (!post) {
       return null;
     }
     post.title = title;
-    return await manager.save(post);
+    return await Post.save(post);
   }
 
   @Mutation(() => Post, { nullable: true })
-  async deletePost(
-    @Arg("id") id: number,
-    @Ctx() { manager }: MyContext
-  ): Promise<DeleteResult> {
-    return await manager.delete(Post, id);
+  async deletePost(@Arg("id") id: number): Promise<DeleteResult> {
+    return await Post.delete(id);
   }
 }

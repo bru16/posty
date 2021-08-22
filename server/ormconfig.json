@@ -5,7 +5,7 @@
    "username": "postgres",
    "password": "test",
    "database": "redditclone",
-   "synchronize": true,
+   "synchronize": false,
    "logging": false,
    "entities": ["dist/entity/**/*.js"],
    "migrations": [
