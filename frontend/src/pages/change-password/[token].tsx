@@ -15,7 +15,7 @@ import { InputField } from "../../components/InputField";
 import { useChangePasswordMutation } from "../../generated/graphql";
 import { toErrorMap } from "../../utils/toErrorMap";
 
-const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
+const ChangePassword: NextPage<{ token: string }> = () => {
   const router = useRouter();
   const [changePassword] = useChangePasswordMutation();
   const [tokenError, setTokenError] = useState("");
@@ -27,7 +27,10 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
         onSubmit={async (values, actions) => {
           const response = await changePassword({
             variables: {
-              token,
+              token:
+                typeof router.query.token === "string"
+                  ? router.query.token
+                  : "",
               newPassword: values.newPassword,
             },
           });
@@ -74,12 +77,6 @@ const ChangePassword: NextPage<{ token: string }> = ({ token }) => {
       </Formik>
     </Flex>
   );
-};
-
-ChangePassword.getInitialProps = ({ query }) => {
-  return {
-    token: query.token as string,
-  };
 };
 
 export default ChangePassword;

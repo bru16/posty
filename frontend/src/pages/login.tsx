@@ -25,6 +25,9 @@ const Login: React.FC<loginProps> = ({}) => {
           });
           const errors = response.data?.login.errors;
           if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.
+          console.log(router.query.next);
+          if (typeof router.query.next === "string")
+            return router.push(router.query.next);
           router.push("/");
         }}
       >
