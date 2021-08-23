@@ -12,13 +12,11 @@ import connectRedis from "connect-redis";
 import { MyContext } from "./types";
 import { ApolloServerPluginLandingPageGraphQLPlayground } from "apollo-server-core/dist/plugin/landingPage/graphqlPlayground";
 import { COOKIE_NAME } from "./constants";
-import { Post } from "./entity/Post";
 
 async function bootstrap() {
   try {
-    const connection = await createConnection();
-    Post.delete({});
-    await connection.runMigrations();
+    await createConnection();
+    // await connection.runMigrations();
     const app = express();
     app.use(
       cors({

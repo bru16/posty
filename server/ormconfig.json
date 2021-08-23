@@ -6,7 +6,7 @@
    "password": "test",
    "database": "redditclone",
    "synchronize": false,
-   "logging": false,
+   "logging": true,
    "entities": ["dist/entity/**/*.js"],
    "migrations": [
       "dist/migration/**/*.ts"
