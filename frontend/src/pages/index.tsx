@@ -2,11 +2,13 @@ import React from "react";
 import { usePostsQuery } from "../generated/graphql";
 
 const Index = () => {
-  const { data, loading } = usePostsQuery();
+  const { data, loading } = usePostsQuery({
+    variables: { limit: 10, cursor: "" },
+  });
 
   return (
     <div>
-      {!data ? (
+      {!data?.posts ? (
         <p>loading...</p>
       ) : (
         data.posts.map((p) => (

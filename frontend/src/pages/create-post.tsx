@@ -7,11 +7,9 @@ import { useCreatePostMutation } from "../generated/graphql";
 import { useIsAuth } from "../utils/useIsAuth";
 
 export const CreatePost: React.FC<{}> = ({}) => {
-  const [createPost] = useCreatePostMutation();
   const router = useRouter();
-  console.log("ESTOY EN CREATE");
-  const { loading } = useIsAuth();
-  if (loading) return <div>loading...</div>;
+  useIsAuth();
+  const [createPost] = useCreatePostMutation();
 
   return (
     <Container mt={20} maxW="400">
