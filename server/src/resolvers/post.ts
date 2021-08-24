@@ -6,13 +6,20 @@ import {
   UseMiddleware,
   Ctx,
   Int,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 import { DeleteResult, getConnection } from "typeorm";
 import { isAuth } from "../entity/middleware/isAuth";
 import { Post } from "../entity/Post";
 import { MyContext } from "../types";
-@Resolver()
+@Resolver(Post)
 export class PostResolver {
+  @FieldResolver(() => String)
+  textShortened(@Root() root: Post) {
+    return root.text.slice(0, 50);
+  }
+
   @Query(() => [Post]) //return array of posts.
   async posts(
     // pagination, orderded by new.
