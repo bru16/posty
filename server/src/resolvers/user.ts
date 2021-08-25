@@ -6,6 +6,8 @@ import {
   Mutation,
   ObjectType,
   Field,
+  FieldResolver,
+  Root,
 } from "type-graphql";
 import { User } from "../entity/User";
 import { MyContext } from "../types";
@@ -31,8 +33,15 @@ class UserResponse {
   @Field(() => User, { nullable: true })
   user?: User;
 }
-Resolver();
+@Resolver(User)
 export class UserResolver {
+  // current user can only see his/her email.
+  @FieldResolver(() => String)
+  email(@Root() user: User, @Ctx() { req }: MyContext) {
+    if (req.session.userId === user.id) return user.email;
+    return "";
+  }
+
   @Query(() => User, { nullable: true })
   async me(@Ctx() { req }: MyContext) {
     if (!req.session.userId) return null;

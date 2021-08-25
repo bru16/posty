@@ -29,12 +29,13 @@ export class PostResolver {
     const realLimit = Math.min(50, limit);
     const queryBuilder = getConnection()
       .getRepository(Post)
-      .createQueryBuilder("p")
-      .orderBy("created_at", "DESC")
+      .createQueryBuilder("post")
+      .innerJoinAndSelect("post.creator", "creator")
+      .orderBy("post.created_at", "DESC")
       .take(realLimit);
 
     if (cursor) {
-      queryBuilder.where("created_at < :cursor", {
+      queryBuilder.where("post.created_at < :cursor", {
         cursor: new Date(parseInt(cursor)),
       });
     }
