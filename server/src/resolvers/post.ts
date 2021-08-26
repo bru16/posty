@@ -9,15 +9,37 @@ import {
   FieldResolver,
   Root,
 } from "type-graphql";
-import { DeleteResult, getConnection } from "typeorm";
+import { DeleteResult, getConnection, getManager } from "typeorm";
 import { isAuth } from "../entity/middleware/isAuth";
 import { Post } from "../entity/Post";
+import { Vote } from "../entity/Vote";
 import { MyContext } from "../types";
 @Resolver(Post)
 export class PostResolver {
   @FieldResolver(() => String)
   textShortened(@Root() root: Post) {
     return root.text.slice(0, 50);
+  }
+
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async vote(
+    @Arg("postId", () => Int) postId: number,
+    @Arg("value", () => Int) value: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Boolean> {
+    const { userId } = req.session;
+    //transaction
+    await getManager().transaction(async (transactionalEntityManager) => {
+      await transactionalEntityManager.insert(Vote, { userId, postId, value });
+      await transactionalEntityManager
+        .createQueryBuilder()
+        .update(Post)
+        .set({ points: () => `points+${value}` })
+        .where("id = :id", { id: postId })
+        .execute();
+    });
+    return true;
   }
 
   @Query(() => [Post]) //return array of posts.
