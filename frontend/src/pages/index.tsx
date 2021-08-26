@@ -1,5 +1,4 @@
 import {
-  Box,
   Button,
   Container,
   Flex,
@@ -7,11 +6,11 @@ import {
   Link,
   Spinner,
   Stack,
-  Text,
 } from "@chakra-ui/react";
-import React from "react";
-import { usePostsQuery } from "../generated/graphql";
 import NextLink from "next/link";
+import React from "react";
+import { Post } from "../components/Post";
+import { usePostsQuery } from "../generated/graphql";
 
 const Index = () => {
   const { data, loading } = usePostsQuery({
@@ -35,10 +34,9 @@ const Index = () => {
       ) : (
         <Stack spacing={8}>
           {data!.posts.map((p) => (
-            <Box p={5} shadow="md" borderWidth="1px" key={p.id}>
-              <Heading fontSize="xl">{p.title}</Heading>
-              <Text mt={4}>{p.textShortened}</Text>
-            </Box>
+            <Flex p={3} shadow="md" borderWidth="1px" key={p.id}>
+              <Post post={p} />
+            </Flex>
           ))}
         </Stack>
       )}
