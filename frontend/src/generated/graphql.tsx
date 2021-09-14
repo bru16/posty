@@ -78,6 +78,12 @@ export type MutationForgotPasswordArgs = {
   email: Scalars['String'];
 };
 
+export type PaginatedPosts = {
+  __typename?: 'PaginatedPosts';
+  posts: Array<Post>;
+  hasMore: Scalars['Boolean'];
+};
+
 export type Post = {
   __typename?: 'Post';
   id: Scalars['Float'];
@@ -93,7 +99,7 @@ export type Post = {
 
 export type Query = {
   __typename?: 'Query';
-  posts: Array<Post>;
+  posts: PaginatedPosts;
   post?: Maybe<Post>;
   me?: Maybe<User>;
 };
@@ -196,7 +202,7 @@ export type PostsQueryVariables = Exact<{
 }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts: Array<{ __typename?: 'Post', id: number, title: string, textShortened: string, points: number, creatorId: number, created_at: string, creator: { __typename?: 'User', id: number, username: string } }> };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', textShortened: string, id: number, title: string, text: string, points: number, creatorId: number, created_at: string, creator: { __typename?: 'User', id: number, email: string, username: string } }> } };
 
 export const PostTypeFragmentDoc = gql`
     fragment PostType on Post {
@@ -503,10 +509,24 @@ export type MeQueryResult = Apollo.QueryResult<MeQuery, MeQueryVariables>;
 export const PostsDocument = gql`
     query Posts($limit: Int!, $cursor: String) {
   posts(limit: $limit, cursor: $cursor) {
-    ...PostType
+    hasMore
+    posts {
+      textShortened
+      id
+      title
+      text
+      points
+      creatorId
+      created_at
+      creator {
+        id
+        email
+        username
+      }
+    }
   }
 }
-    ${PostTypeFragmentDoc}`;
+    `;
 
 /**
  * __usePostsQuery__

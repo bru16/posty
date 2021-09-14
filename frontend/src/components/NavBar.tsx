@@ -1,16 +1,17 @@
+import { useApolloClient } from "@apollo/client";
 import { Button, Flex, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
 
-interface NavBarProps {}
-
-export const NavBar: React.FC<NavBarProps> = ({}) => {
-  const { data, loading, error } = useMeQuery();
+export const NavBar: React.FC = ({}) => {
+  const { data, loading } = useMeQuery();
   const [logout, { loading: logoutLoading }] = useLogoutMutation();
+  const apolloClient = useApolloClient();
 
   const handleLogout = async () => {
-    logout();
+    await logout();
+    await apolloClient.resetStore(); // reset cache
   };
 
   if (loading) return null;

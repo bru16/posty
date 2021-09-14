@@ -27,6 +27,7 @@ export const Post: React.FC<PostProps> = ({ post }) => {
     <>
       <Flex mr={2} align="center" justifyContent="center" direction="column">
         <IconButton
+          color={"green"}
           variant="solid"
           colorScheme="black"
           aria-label="UpVote"

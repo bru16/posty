@@ -13,9 +13,18 @@ import { Post } from "../components/Post";
 import { usePostsQuery } from "../generated/graphql";
 
 const Index = () => {
-  const { data, loading } = usePostsQuery({
-    variables: { limit: 10 },
+  const { data, loading, fetchMore, variables } = usePostsQuery({
+    variables: { limit: 10, cursor: null },
   });
+
+  const handleFetchMore = () => {
+    fetchMore({
+      variables: {
+        limit: variables?.limit,
+        cursor: data?.posts.posts[data.posts.posts.length - 1].created_at, // last post as a reference to paginate more posts.
+      },
+    });
+  };
 
   if (!loading && !data) return <div>something went wrong</div>;
 
@@ -33,16 +42,16 @@ const Index = () => {
         </Flex>
       ) : (
         <Stack spacing={8}>
-          {data!.posts.map((p) => (
+          {data!.posts.posts.map((p) => (
             <Flex p={3} shadow="md" borderWidth="1px" key={p.id}>
               <Post post={p} />
             </Flex>
           ))}
         </Stack>
       )}
-      {data && (
+      {data && data.posts.hasMore && (
         <Flex justifyContent="center" p={4}>
-          <Button>Load more...</Button>
+          <Button onClick={handleFetchMore}>Load more...</Button>
         </Flex>
       )}
     </Container>
