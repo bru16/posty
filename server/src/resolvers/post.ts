@@ -8,12 +8,24 @@ import {
   Int,
   FieldResolver,
   Root,
+  Field,
+  ObjectType,
 } from "type-graphql";
 import { DeleteResult, getConnection, getManager } from "typeorm";
 import { isAuth } from "../entity/middleware/isAuth";
 import { Post } from "../entity/Post";
 import { Vote } from "../entity/Vote";
 import { MyContext } from "../types";
+
+@ObjectType()
+class PaginatedPosts {
+  @Field(() => [Post])
+  posts: Post[];
+
+  @Field()
+  hasMore: boolean;
+}
+
 @Resolver(Post)
 export class PostResolver {
   @FieldResolver(() => String)
@@ -72,26 +84,32 @@ export class PostResolver {
     return true;
   }
 
-  @Query(() => [Post]) //return array of posts.
+  @Query(() => PaginatedPosts) //return array of posts.
   async posts(
     // pagination, orderded by new.
     @Arg("limit", () => Int) limit: number,
     @Arg("cursor", () => String, { nullable: true }) cursor: string | null
-  ): Promise<Post[]> {
+  ): Promise<PaginatedPosts> {
     const realLimit = Math.min(50, limit);
+
     const queryBuilder = getConnection()
       .getRepository(Post)
       .createQueryBuilder("post")
       .innerJoinAndSelect("post.creator", "creator")
       .orderBy("post.created_at", "DESC")
-      .take(realLimit);
+      .take(realLimit + 1); // take 1 more post to see if there's more posts to fetch.
 
     if (cursor) {
       queryBuilder.where("post.created_at < :cursor", {
         cursor: new Date(parseInt(cursor)),
       });
     }
-    return queryBuilder.getMany();
+    const posts = await queryBuilder.getMany();
+
+    return {
+      posts: posts.slice(0, realLimit),
+      hasMore: posts.length === realLimit + 1,
+    };
   }
 
   @Query(() => Post, { nullable: true })
