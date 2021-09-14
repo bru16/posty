@@ -29,16 +29,46 @@ export class PostResolver {
     @Ctx() { req }: MyContext
   ): Promise<Boolean> {
     const { userId } = req.session;
-    //transaction
-    await getManager().transaction(async (transactionalEntityManager) => {
-      await transactionalEntityManager.insert(Vote, { userId, postId, value });
-      await transactionalEntityManager
-        .createQueryBuilder()
-        .update(Post)
-        .set({ points: () => `points+${value}` })
-        .where("id = :id", { id: postId })
-        .execute();
-    });
+
+    const vote = await Vote.findOne({ postId, userId });
+    const isUpvote = value !== -1;
+    const realValue = isUpvote ? 1 : -1;
+
+    //transactions
+    // change opinion, wants to upvote/downvote instead.
+    if (vote && realValue !== vote.value) {
+      await getManager().transaction(async (transactionalEntityManager) => {
+        transactionalEntityManager.query(
+          `
+          update vote
+          set value = $1
+          where "postId" = $2 AND "userId" = $3
+          `,
+          [realValue, postId, userId]
+        );
+
+        transactionalEntityManager
+          .createQueryBuilder()
+          .update(Post)
+          .set({ points: () => `points+${2 * realValue}` })
+          .where("id = :id", { id: postId })
+          .execute();
+      });
+    } else if (!vote) {
+      await getManager().transaction(async (transactionalEntityManager) => {
+        await transactionalEntityManager.insert(Vote, {
+          userId,
+          postId,
+          value: realValue,
+        });
+        await transactionalEntityManager
+          .createQueryBuilder()
+          .update(Post)
+          .set({ points: () => `points+${realValue}` })
+          .where("id = :id", { id: postId })
+          .execute();
+      });
+    }
     return true;
   }
 
