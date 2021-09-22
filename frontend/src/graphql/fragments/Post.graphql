@@ -5,6 +5,7 @@ fragment PostType on Post {
   points
   creatorId
   created_at
+  voteStatus
   creator {
     id
     username

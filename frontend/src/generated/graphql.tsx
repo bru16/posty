@@ -90,6 +90,7 @@ export type Post = {
   title: Scalars['String'];
   text: Scalars['String'];
   points: Scalars['Float'];
+  voteStatus?: Maybe<Scalars['Int']>;
   creatorId: Scalars['Float'];
   creator: User;
   created_at: Scalars['String'];
@@ -136,7 +137,7 @@ export type UserResponse = {
   user?: Maybe<User>;
 };
 
-export type PostTypeFragment = { __typename?: 'Post', id: number, title: string, textShortened: string, points: number, creatorId: number, created_at: string, creator: { __typename?: 'User', id: number, username: string } };
+export type PostTypeFragment = { __typename?: 'Post', id: number, title: string, textShortened: string, points: number, creatorId: number, created_at: string, voteStatus?: Maybe<number>, creator: { __typename?: 'User', id: number, username: string } };
 
 export type RegularUserFragment = { __typename?: 'User', id: number, username: string, email: string };
 
@@ -202,7 +203,7 @@ export type PostsQueryVariables = Exact<{
 }>;
 
 
-export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', textShortened: string, id: number, title: string, text: string, points: number, creatorId: number, created_at: string, creator: { __typename?: 'User', id: number, email: string, username: string } }> } };
+export type PostsQuery = { __typename?: 'Query', posts: { __typename?: 'PaginatedPosts', hasMore: boolean, posts: Array<{ __typename?: 'Post', textShortened: string, id: number, title: string, text: string, points: number, creatorId: number, created_at: string, voteStatus?: Maybe<number>, creator: { __typename?: 'User', id: number, email: string, username: string } }> } };
 
 export const PostTypeFragmentDoc = gql`
     fragment PostType on Post {
@@ -212,6 +213,7 @@ export const PostTypeFragmentDoc = gql`
   points
   creatorId
   created_at
+  voteStatus
   creator {
     id
     username
@@ -518,6 +520,7 @@ export const PostsDocument = gql`
       points
       creatorId
       created_at
+      voteStatus
       creator {
         id
         email

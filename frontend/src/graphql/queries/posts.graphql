@@ -9,6 +9,7 @@ query Posts($limit: Int!, $cursor: String) {
       points
       creatorId
       created_at
+      voteStatus
       creator {
         id
         email

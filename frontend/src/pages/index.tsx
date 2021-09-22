@@ -7,6 +7,7 @@ import {
   Spinner,
   Stack,
 } from "@chakra-ui/react";
+import { withApollo } from "next-apollo";
 import NextLink from "next/link";
 import React from "react";
 import { Post } from "../components/Post";
@@ -41,7 +42,7 @@ const Index = () => {
           <Spinner size="xl" />
         </Flex>
       ) : (
-        <Stack spacing={8}>
+        <Stack spacing={8} mb={10}>
           {data!.posts.posts.map((p) => (
             <Flex p={3} shadow="md" borderWidth="1px" key={p.id}>
               <Post post={p} />
