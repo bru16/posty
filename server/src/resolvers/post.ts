@@ -88,23 +88,50 @@ export class PostResolver {
   async posts(
     // pagination, orderded by new.
     @Arg("limit", () => Int) limit: number,
-    @Arg("cursor", () => String, { nullable: true }) cursor: string | null
+    @Arg("cursor", () => String, { nullable: true }) cursor: string | null,
+    @Ctx() { req }: MyContext
   ): Promise<PaginatedPosts> {
     const realLimit = Math.min(50, limit);
 
-    const queryBuilder = getConnection()
+    const replacements: any[] = [realLimit + 1];
+
+    if (req.session.userId) {
+      replacements.push(req.session.userId);
+    }
+    if (cursor) {
+      replacements.push(new Date(parseInt(cursor)));
+    }
+
+    const posts = await getConnection().query(
+      `
+    select p.*,
+    json_build_object(
+      'id', u.id,
+      'username', u.username,
+      'email', u.email,
+      'created_at', u.created_at,
+      'updated_at', u.updated_at
+    ) creator,
+    ${
+      req.session.userId
+        ? '(select value from vote where "userId" = $2 and "postId" = p.id) "voteStatus"'
+        : 'null as "voteStatus"'
+    }
+    from post p
+    inner join public.user u on u.id = p."creatorId"
+    ${cursor ? `where p."created_at" < $3` : ""}
+    order by p."created_at" DESC
+    limit $1
+    `,
+      replacements
+    );
+
+    /* const queryBuilder = getConnection()
       .getRepository(Post)
       .createQueryBuilder("post")
       .innerJoinAndSelect("post.creator", "creator")
       .orderBy("post.created_at", "DESC")
-      .take(realLimit + 1); // take 1 more post to see if there's more posts to fetch.
-
-    if (cursor) {
-      queryBuilder.where("post.created_at < :cursor", {
-        cursor: new Date(parseInt(cursor)),
-      });
-    }
-    const posts = await queryBuilder.getMany();
+      .take(realLimit + 1); // take 1 more post to see if there's more posts to fetch. */
 
     return {
       posts: posts.slice(0, realLimit),
