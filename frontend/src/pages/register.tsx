@@ -1,10 +1,12 @@
-import React from "react";
-import { Formik, Form } from "formik";
 import { Button, Container } from "@chakra-ui/react";
-import { InputField } from "../components/InputField";
-import { useRegisterMutation } from "../generated/graphql";
-import { toErrorMap } from "../utils/toErrorMap";
+import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
+import React from "react";
+import { InputField } from "../components/InputField";
+import { NavBar } from "../components/NavBar";
+import { useRegisterMutation } from "../generated/graphql";
+import withApollo from "../utils/apolloServer";
+import { toErrorMap } from "../utils/toErrorMap";
 
 interface registerProps {}
 
@@ -12,47 +14,51 @@ export const Register: React.FC<registerProps> = ({}) => {
   const [register] = useRegisterMutation();
   const router = useRouter();
   return (
-    <Container mt={20} maxW="400">
-      <Formik
-        initialValues={{ email: "", username: "", password: "" }}
-        onSubmit={async (values, actions) => {
-          const response = await register({ variables: { options: values } });
-          const errors = response.data?.register.errors;
-          if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.
-          router.push("/");
-        }}
-      >
-        {(props) => (
-          <Form>
-            <InputField
-              name="email"
-              placeholder="email"
-              label="Email"
-              type="email"
-            />
-            <InputField
-              name="username"
-              placeholder="username"
-              label="Username"
-            />
-            <InputField
-              name="password"
-              placeholder="password"
-              label="Password"
-              type="password"
-            />
-            <Button
-              mt={5}
-              colorScheme="teal"
-              isLoading={props.isSubmitting}
-              type="submit"
-            >
-              Submit
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Container>
+    <>
+      <NavBar />
+      <Container mt={20} maxW="400">
+        <Formik
+          initialValues={{ email: "", username: "", password: "" }}
+          onSubmit={async (values, actions) => {
+            const response = await register({ variables: { options: values } });
+            const errors = response.data?.register.errors;
+            if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.
+            router.push("/");
+          }}
+        >
+          {(props) => (
+            <Form>
+              <InputField
+                name="email"
+                placeholder="email"
+                label="Email"
+                type="email"
+              />
+              <InputField
+                name="username"
+                placeholder="username"
+                label="Username"
+              />
+              <InputField
+                name="password"
+                placeholder="password"
+                label="Password"
+                type="password"
+              />
+              <Button
+                mt={5}
+                colorScheme="teal"
+                isLoading={props.isSubmitting}
+                type="submit"
+              >
+                Submit
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Container>
+    </>
   );
 };
-export default Register;
+
+export default withApollo({ ssr: false })(Register);

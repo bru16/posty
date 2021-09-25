@@ -1,16 +1,18 @@
 import {
-  Container,
-  Box,
-  Button,
   Alert,
   AlertDescription,
   AlertIcon,
   AlertTitle,
+  Box,
+  Button,
+  Container
 } from "@chakra-ui/react";
-import { Formik, Form } from "formik";
+import { Form, Formik } from "formik";
 import React, { useState } from "react";
 import { InputField } from "../components/InputField";
+import { NavBar } from "../components/NavBar";
 import { useForgotPasswordMutation } from "../generated/graphql";
+import withApollo from "../utils/apolloServer";
 
 export const forgotPassword: React.FC<{}> = ({}) => {
   const [forgotPassword] = useForgotPasswordMutation();
@@ -41,35 +43,38 @@ export const forgotPassword: React.FC<{}> = ({}) => {
   }
 
   return (
-    <Container mt={20} maxW="400">
-      <Box textAlign="center">
-        <h1>Forgot Password</h1>
-      </Box>
-      <Formik
-        initialValues={{ email: "" }}
-        onSubmit={async (values, actions) => {
-          await forgotPassword({
-            variables: { email: values.email },
-          });
-          setEmailWasSent(true);
-        }}
-      >
-        {(props) => (
-          <Form>
-            <InputField name="email" placeholder="email" label="Email" />
-            <Button
-              mt={5}
-              colorScheme="teal"
-              isLoading={props.isSubmitting}
-              type="submit"
-            >
-              Submit
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Container>
+    <>
+      <NavBar />
+      <Container mt={20} maxW="400">
+        <Box textAlign="center">
+          <h1>Forgot Password</h1>
+        </Box>
+        <Formik
+          initialValues={{ email: "" }}
+          onSubmit={async (values, actions) => {
+            await forgotPassword({
+              variables: { email: values.email },
+            });
+            setEmailWasSent(true);
+          }}
+        >
+          {(props) => (
+            <Form>
+              <InputField name="email" placeholder="email" label="Email" />
+              <Button
+                mt={5}
+                colorScheme="teal"
+                isLoading={props.isSubmitting}
+                type="submit"
+              >
+                Submit
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Container>
+    </>
   );
 };
 
-export default forgotPassword;
+export default withApollo({ ssr: false })(forgotPassword);
