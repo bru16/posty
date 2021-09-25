@@ -1,20 +1,26 @@
-import { ChevronUpIcon, ChevronDownIcon } from "@chakra-ui/icons";
-import { Flex, IconButton, Box, Heading, Text } from "@chakra-ui/react";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { Box, Flex, Heading, IconButton, Text } from "@chakra-ui/react";
 import gql from "graphql-tag";
+import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
 import { PostTypeFragment, useVoteMutation } from "../generated/graphql";
+import { useIsAuth } from "../utils/useIsAuth";
 
 interface PostProps {
   post: PostTypeFragment;
 }
 
 export const Post: React.FC<PostProps> = ({ post }) => {
+  const router = useRouter();
+  const { isAuth } = useIsAuth();
   const [vote] = useVoteMutation();
   const [loadingState, setLoadingState] = useState<
     "upvote-loading" | "downvote-loading" | "no-loading"
   >("no-loading");
 
   const handleVote = async (value: number) => {
+    if (!isAuth) return router.push("/login");
+
     setLoadingState(value === 1 ? "upvote-loading" : "downvote-loading");
     await vote({
       variables: {
