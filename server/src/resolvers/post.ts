@@ -98,8 +98,10 @@ export class PostResolver {
     if (req.session.userId) {
       replacements.push(req.session.userId);
     }
+    let cursorIndex = 3; // second parameter $2 can be the cursor if there's no user session.
     if (cursor) {
       replacements.push(new Date(parseInt(cursor)));
+      cursorIndex = replacements.length;
     }
 
     const posts = await getConnection().query(
@@ -119,7 +121,7 @@ export class PostResolver {
     }
     from post p
     inner join public.user u on u.id = p."creatorId"
-    ${cursor ? `where p."created_at" < $3` : ""}
+    ${cursor ? `where p."created_at" < $${cursorIndex}` : ""}
     order by p."created_at" DESC
     limit $1
     `,
