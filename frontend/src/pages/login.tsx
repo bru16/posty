@@ -5,7 +5,7 @@ import NextLink from "next/link";
 import React from "react";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
-import { useLoginMutation } from "../generated/graphql";
+import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import withApollo from "../utils/apolloServer";
 import { toErrorMap } from "../utils/toErrorMap";
 
@@ -26,6 +26,16 @@ const Login: React.FC<loginProps> = ({}) => {
           onSubmit={async (values, actions) => {
             const response = await login({
               variables: values,
+              update: (cache, { data }) => {
+                cache.writeQuery<MeQuery>({
+                  query: MeDocument,
+                  data: {
+                    __typename: "Query",
+                    me: data?.login.user,
+                  },
+                });
+                cache.evict({ fieldName: "posts" });
+              },
             });
             const errors = response.data?.login.errors;
             if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.

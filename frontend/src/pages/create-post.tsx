@@ -1,7 +1,7 @@
-import { Box, Button, Container } from "@chakra-ui/react";
+import { Box, Button, Container, Flex, Spinner } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
-import React from "react";
+import React, { useEffect } from "react";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { useCreatePostMutation } from "../generated/graphql";
@@ -10,7 +10,6 @@ import { useIsAuth } from "../utils/useIsAuth";
 
 export const CreatePost: React.FC<{}> = ({}) => {
   const router = useRouter();
-  useIsAuth();
   const [createPost] = useCreatePostMutation();
 
   return (
@@ -28,6 +27,9 @@ export const CreatePost: React.FC<{}> = ({}) => {
                 variables: {
                   title: values.title,
                   text: values.text,
+                },
+                update: (cache) => {
+                  cache.evict({ fieldName: "posts" });
                 },
               });
               router.push("/");
