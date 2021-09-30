@@ -1,20 +1,18 @@
-import withApollo from "../../utils/apolloServer";
-import { useRouter } from "next/dist/client/router";
-import { usePostQuery } from "../../generated/graphql";
-import React from "react";
-import { Spinner } from "@chakra-ui/spinner";
-import { NavBar } from "../../components/NavBar";
 import { Container, Heading } from "@chakra-ui/layout";
+import { Spinner } from "@chakra-ui/spinner";
+import { useRouter } from "next/dist/client/router";
+import React from "react";
+import { NavBar } from "../../components/NavBar";
+import { usePostQuery } from "../../generated/graphql";
+import withApollo from "../../utils/apolloServer";
+import { useGetIntId } from "../../utils/useGetIntId";
 
 const Post = () => {
-  const router = useRouter();
-  const intId =
-    typeof router.query.id === "string" ? parseInt(router.query.id) : -1;
-
+  const id = useGetIntId();
   const { data, loading } = usePostQuery({
-    skip: intId === -1,
+    skip: id === -1,
     variables: {
-      id: intId,
+      id,
     },
   });
 
