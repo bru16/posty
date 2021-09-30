@@ -11,7 +11,7 @@ import {
   Field,
   ObjectType,
 } from "type-graphql";
-import { DeleteResult, getConnection, getManager } from "typeorm";
+import { getConnection, getManager } from "typeorm";
 import { isAuth } from "../entity/middleware/isAuth";
 import { Post } from "../entity/Post";
 import { Vote } from "../entity/Vote";
@@ -142,8 +142,8 @@ export class PostResolver {
   }
 
   @Query(() => Post, { nullable: true })
-  async post(@Arg("id") id: number): Promise<Post | undefined> {
-    return await Post.findOne(id);
+  async post(@Arg("id", () => Int) id: number): Promise<Post | undefined> {
+    return await Post.findOne(id, { relations: ["creator"] });
   }
 
   @Mutation(() => Post)
@@ -173,8 +173,13 @@ export class PostResolver {
     return await Post.save(post);
   }
 
-  @Mutation(() => Post, { nullable: true })
-  async deletePost(@Arg("id") id: number): Promise<DeleteResult> {
-    return await Post.delete(id);
+  @Mutation(() => Boolean)
+  @UseMiddleware(isAuth)
+  async deletePost(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Boolean> {
+    await Post.delete({ id, creatorId: req.session.userId });
+    return true;
   }
 }
