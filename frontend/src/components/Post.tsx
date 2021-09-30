@@ -1,10 +1,15 @@
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
-import { Box, Flex, Heading, IconButton, Text } from "@chakra-ui/react";
+import { ChevronDownIcon, ChevronUpIcon, DeleteIcon } from "@chakra-ui/icons";
+import { Box, Flex, Heading, IconButton, Link, Text } from "@chakra-ui/react";
 import gql from "graphql-tag";
 import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
-import { PostTypeFragment, useVoteMutation } from "../generated/graphql";
+import {
+  PostTypeFragment,
+  useDeletePostMutation,
+  useVoteMutation,
+} from "../generated/graphql";
 import { useIsAuth } from "../utils/useIsAuth";
+import NextLink from "next/link";
 
 interface PostProps {
   post: PostTypeFragment;
@@ -14,6 +19,7 @@ export const Post: React.FC<PostProps> = ({ post }) => {
   const router = useRouter();
   const { isAuth } = useIsAuth();
   const [vote] = useVoteMutation();
+  const [deletePost] = useDeletePostMutation();
   const [loadingState, setLoadingState] = useState<
     "upvote-loading" | "downvote-loading" | "no-loading"
   >("no-loading");
@@ -63,6 +69,15 @@ export const Post: React.FC<PostProps> = ({ post }) => {
     setLoadingState("no-loading");
   };
 
+  const handleDelete = () => {
+    deletePost({
+      variables: { id: post.id },
+      update: (cache) => {
+        cache.evict({ id: "Post:" + post.id });
+      },
+    });
+  };
+
   return (
     <>
       <Flex mr={2} align="center" justifyContent="center" direction="column">
@@ -88,10 +103,23 @@ export const Post: React.FC<PostProps> = ({ post }) => {
           disabled={loadingState !== "no-loading"}
         />
       </Flex>
-      <Box>
-        <Heading fontSize="xl">{post.title}</Heading>
+      <Box flex={1}>
+        <NextLink href="/post/[id]" as={`/post/${post.id}`}>
+          <Link>
+            <Heading fontSize="xl">{post.title}</Heading>
+          </Link>
+        </NextLink>
         <Text color="gray">{post.creator.username}</Text>
-        <Text mt={4}>{post.textShortened}</Text>
+        <Flex align="center">
+          <Text mt={4}>{post.textShortened}</Text>
+          <IconButton
+            ml="auto"
+            icon={<DeleteIcon />}
+            aria-label="Delete Post"
+            onClick={handleDelete}
+            size="sm"
+          />
+        </Flex>
       </Box>
     </>
   );

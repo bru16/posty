@@ -1,5 +1,5 @@
 import { useApolloClient } from "@apollo/client";
-import { Button, Flex, Link } from "@chakra-ui/react";
+import { Button, Flex, Heading, Link } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 import { useLogoutMutation, useMeQuery } from "../generated/graphql";
@@ -17,7 +17,22 @@ export const NavBar: React.FC = ({}) => {
   if (loading) return null;
 
   return (
-    <Flex justifyContent="flex-end" bg="aliceblue" p={4}>
+    <Flex
+      justifyContent="flex-end"
+      bg="aliceblue"
+      p={4}
+      align="center"
+      position="sticky"
+      top={0}
+      zIndex={1}
+    >
+      <Flex mr="auto">
+        <NextLink href="/">
+          <Link>
+            <Heading>Reddit</Heading>
+          </Link>
+        </NextLink>
+      </Flex>
       {!data?.me ? (
         <>
           <NextLink href="/register">
@@ -31,10 +46,11 @@ export const NavBar: React.FC = ({}) => {
         <>
           <h2>Welcome {data.me.username}!</h2>
           <Button
-            pb={2}
-            size="sm"
             onClick={handleLogout}
             isLoading={logoutLoading}
+            variant="link"
+            color="green"
+            ml="2"
           >
             Logout
           </Button>

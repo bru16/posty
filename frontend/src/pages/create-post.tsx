@@ -6,7 +6,6 @@ import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { useCreatePostMutation } from "../generated/graphql";
 import withApollo from "../utils/apolloServer";
-import { useIsAuth } from "../utils/useIsAuth";
 
 export const CreatePost: React.FC<{}> = ({}) => {
   const router = useRouter();
