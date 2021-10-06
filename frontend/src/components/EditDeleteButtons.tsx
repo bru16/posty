@@ -1,5 +1,5 @@
 import { DeleteIcon, EditIcon } from "@chakra-ui/icons";
-import { IconButton, Link } from "@chakra-ui/react";
+import { IconButton, Link, useToast } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
 import { useDeletePostMutation } from "../generated/graphql";
@@ -9,15 +9,23 @@ interface EditDeleteButtonsProps {
 }
 
 export const EditDeleteButtons: React.FC<EditDeleteButtonsProps> = ({ id }) => {
+  const toast = useToast();
   const [deletePost] = useDeletePostMutation();
-  const handleDelete = () => {
-    deletePost({
+  const handleDelete = async () => {
+    await deletePost({
       variables: { id },
       update: (cache) => {
         cache.evict({ id: "Post:" + id });
       },
     });
+    toast({
+      title: "Reddit",
+      description: "Your post have been deleted.",
+      isClosable: true,
+      position: "bottom-left",
+    });
   };
+
   return (
     <>
       <IconButton
