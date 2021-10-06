@@ -4,11 +4,11 @@ import {
   Flex,
   Heading,
   Link,
-  Spinner,
   Stack,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
+import { LoadingSpinner } from "../components/LoadingSpinner";
 import { NavBar } from "../components/NavBar";
 import { Post } from "../components/Post";
 import { usePostsQuery } from "../generated/graphql";
@@ -41,9 +41,7 @@ const Index = () => {
           </NextLink>
         </Flex>
         {loading && !data ? (
-          <Flex h={400} align="center" justifyContent="center">
-            <Spinner size="xl" />
-          </Flex>
+          <LoadingSpinner />
         ) : (
           <Stack spacing={8} mb={10}>
             {data!.posts.posts.map((p) => (

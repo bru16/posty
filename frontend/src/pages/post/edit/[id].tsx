@@ -1,12 +1,13 @@
-import { Box, Button, Container, Spinner } from "@chakra-ui/react";
+import { Box, Button, Container } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { InputField } from "../../../components/InputField";
+import { LoadingSpinner } from "../../../components/LoadingSpinner";
 import { NavBar } from "../../../components/NavBar";
 import {
-    usePostQuery,
-    useUpdatePostMutation
+  usePostQuery,
+  useUpdatePostMutation,
 } from "../../../generated/graphql";
 import WithApollo from "../../../utils/apolloServer";
 import { useGetIntId } from "../../../utils/useGetIntId";
@@ -23,7 +24,7 @@ const EditPost: React.FC<EditPostProps> = ({}) => {
     },
   });
   const [updatePost] = useUpdatePostMutation();
-  if (loading) return <Spinner />;
+  if (loading) return <LoadingSpinner />;
 
   if (!data?.post) {
     return <div>Something went wrong</div>;

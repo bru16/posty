@@ -1,7 +1,6 @@
 import { Container, Heading } from "@chakra-ui/layout";
-import { Spinner } from "@chakra-ui/spinner";
-import { useRouter } from "next/dist/client/router";
 import React from "react";
+import { LoadingSpinner } from "../../components/LoadingSpinner";
 import { NavBar } from "../../components/NavBar";
 import { usePostQuery } from "../../generated/graphql";
 import withApollo from "../../utils/apolloServer";
@@ -16,7 +15,7 @@ const Post = () => {
     },
   });
 
-  if (loading) return <Spinner />;
+  if (loading) return <LoadingSpinner />;
 
   if (!data?.post) {
     return <div>Something went wrong</div>;
