@@ -5,7 +5,6 @@ query Post($id: Int!) {
     points
     creatorId
     created_at
-    voteStatus
     text
     creator {
       id

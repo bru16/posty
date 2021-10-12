@@ -5,7 +5,7 @@ import {
   AlertTitle,
   Box,
   Button,
-  Container
+  Container,
 } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import React, { useState } from "react";
@@ -20,7 +20,7 @@ export const forgotPassword: React.FC<{}> = ({}) => {
 
   if (emailWasSent) {
     return (
-      <Box>
+      <Box w="100%" h="100%" position="fixed">
         <Alert
           status="success"
           variant="subtle"
@@ -28,7 +28,7 @@ export const forgotPassword: React.FC<{}> = ({}) => {
           alignItems="center"
           justifyContent="center"
           textAlign="center"
-          height="950px"
+          height="100%"
         >
           <AlertIcon boxSize="40px" mr={0} />
           <AlertTitle mt={4} mb={1} fontSize="lg">
@@ -43,37 +43,34 @@ export const forgotPassword: React.FC<{}> = ({}) => {
   }
 
   return (
-    <>
-      <NavBar />
-      <Container mt={20} maxW="400">
-        <Box textAlign="center">
-          <h1>Forgot Password</h1>
-        </Box>
-        <Formik
-          initialValues={{ email: "" }}
-          onSubmit={async (values, actions) => {
-            await forgotPassword({
-              variables: { email: values.email },
-            });
-            setEmailWasSent(true);
-          }}
-        >
-          {(props) => (
-            <Form>
-              <InputField name="email" placeholder="email" label="Email" />
-              <Button
-                mt={5}
-                colorScheme="teal"
-                isLoading={props.isSubmitting}
-                type="submit"
-              >
-                Submit
-              </Button>
-            </Form>
-          )}
-        </Formik>
-      </Container>
-    </>
+    <Container mt={20} maxW="400">
+      <Box textAlign="center">
+        <h1>Forgot Password</h1>
+      </Box>
+      <Formik
+        initialValues={{ email: "" }}
+        onSubmit={async (values, actions) => {
+          await forgotPassword({
+            variables: { email: values.email },
+          });
+          setEmailWasSent(true);
+        }}
+      >
+        {(props) => (
+          <Form>
+            <InputField name="email" placeholder="email" label="Email" />
+            <Button
+              mt={5}
+              colorScheme="teal"
+              isLoading={props.isSubmitting}
+              type="submit"
+            >
+              Submit
+            </Button>
+          </Form>
+        )}
+      </Formik>
+    </Container>
   );
 };
 

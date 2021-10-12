@@ -19,7 +19,7 @@ export const VotePost: React.FC<VotePostProps> = ({
 }) => {
   const { isAuth } = useIsAuth();
   const [vote] = useVoteMutation();
-
+  console.log("STATUS: " + voteStatus);
   const [loadingState, setLoadingState] = useState<
     "upvote-loading" | "downvote-loading" | "no-loading"
   >("no-loading");

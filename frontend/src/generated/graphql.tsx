@@ -219,7 +219,7 @@ export type PostQueryVariables = Exact<{
 }>;
 
 
-export type PostQuery = { __typename?: 'Query', post?: Maybe<{ __typename?: 'Post', id: number, title: string, points: number, creatorId: number, created_at: string, voteStatus?: Maybe<number>, text: string, creator: { __typename?: 'User', id: number, username: string } }> };
+export type PostQuery = { __typename?: 'Query', post?: Maybe<{ __typename?: 'Post', id: number, title: string, points: number, creatorId: number, created_at: string, text: string, creator: { __typename?: 'User', id: number, username: string } }> };
 
 export type PostsQueryVariables = Exact<{
   limit: Scalars['Int'];
@@ -609,7 +609,6 @@ export const PostDocument = gql`
     points
     creatorId
     created_at
-    voteStatus
     text
     creator {
       id
