@@ -1,6 +1,7 @@
 import { Container, Heading } from "@chakra-ui/layout";
 import React from "react";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
+import { NavBar } from "../../components/NavBar";
 import { usePostQuery } from "../../generated/graphql";
 import withApollo from "../../utils/apolloServer";
 import { useGetIntId } from "../../utils/useGetIntId";
@@ -21,10 +22,13 @@ const Post = () => {
   }
 
   return (
-    <Container>
-      <Heading>{data.post.title}</Heading>
-      <div>{data.post.text}</div>
-    </Container>
+    <>
+      <NavBar />
+      <Container>
+        <Heading>{data.post.title}</Heading>
+        <div>{data.post.text}</div>
+      </Container>
+    </>
   );
 };
 

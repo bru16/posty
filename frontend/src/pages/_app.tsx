@@ -12,11 +12,10 @@ function MyApp({ Component, pageProps }: any) {
           useSystemColorMode: true,
         }}
       >
-        <NavBar />
         <Component {...pageProps} />
       </ColorModeProvider>
     </ChakraProvider>
   );
 }
 
-export default WithApollo({ ssr: false })(MyApp);
+export default MyApp;

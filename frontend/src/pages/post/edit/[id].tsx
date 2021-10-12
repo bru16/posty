@@ -29,40 +29,43 @@ const EditPost = ({}) => {
   }
 
   return (
-    <Container mt={20} maxW="400">
-      <Box textAlign="center">
-        <h1>Edit your post</h1>
-      </Box>
-      <Formik
-        initialValues={{ title: data.post.title, text: data.post.text }}
-        onSubmit={async (values, actions) => {
-          await updatePost({ variables: { id, ...values } });
-          router.back();
-        }}
-      >
-        {(props) => (
-          <Form>
-            <InputField name="title" placeholder="title" label="Title" />
-            <InputField
-              name="text"
-              placeholder="text"
-              label="Text"
-              type="text"
-              textarea
-            />
-            <Button
-              mt={5}
-              colorScheme="linkedin"
-              isLoading={props.isSubmitting}
-              type="submit"
-              size="md"
-            >
-              Edit
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Container>
+    <>
+      <NavBar />
+      <Container mt={20} maxW="400">
+        <Box textAlign="center">
+          <h1>Edit your post</h1>
+        </Box>
+        <Formik
+          initialValues={{ title: data.post.title, text: data.post.text }}
+          onSubmit={async (values, actions) => {
+            await updatePost({ variables: { id, ...values } });
+            router.back();
+          }}
+        >
+          {(props) => (
+            <Form>
+              <InputField name="title" placeholder="title" label="Title" />
+              <InputField
+                name="text"
+                placeholder="text"
+                label="Text"
+                type="text"
+                textarea
+              />
+              <Button
+                mt={5}
+                colorScheme="linkedin"
+                isLoading={props.isSubmitting}
+                type="submit"
+                size="md"
+              >
+                Edit
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Container>
+    </>
   );
 };
 

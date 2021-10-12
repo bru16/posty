@@ -14,59 +14,62 @@ export const Register: React.FC<registerProps> = ({}) => {
   const [register] = useRegisterMutation();
   const router = useRouter();
   return (
-    <Container mt={20} maxW="400">
-      <Formik
-        initialValues={{ email: "", username: "", password: "" }}
-        onSubmit={async (values, actions) => {
-          const response = await register({
-            variables: { options: values },
-            update: (cache, { data }) => {
-              cache.writeQuery<MeQuery>({
-                query: MeDocument,
-                data: {
-                  // the data to cache
-                  __typename: "Query",
-                  me: data?.register.user,
-                },
-              });
-            },
-          });
-          const errors = response.data?.register.errors;
-          if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.
-          router.push("/");
-        }}
-      >
-        {(props) => (
-          <Form>
-            <InputField
-              name="email"
-              placeholder="email"
-              label="Email"
-              type="email"
-            />
-            <InputField
-              name="username"
-              placeholder="username"
-              label="Username"
-            />
-            <InputField
-              name="password"
-              placeholder="password"
-              label="Password"
-              type="password"
-            />
-            <Button
-              mt={5}
-              colorScheme="teal"
-              isLoading={props.isSubmitting}
-              type="submit"
-            >
-              Submit
-            </Button>
-          </Form>
-        )}
-      </Formik>
-    </Container>
+    <>
+      <NavBar />
+      <Container mt={20} maxW="400">
+        <Formik
+          initialValues={{ email: "", username: "", password: "" }}
+          onSubmit={async (values, actions) => {
+            const response = await register({
+              variables: { options: values },
+              update: (cache, { data }) => {
+                cache.writeQuery<MeQuery>({
+                  query: MeDocument,
+                  data: {
+                    // the data to cache
+                    __typename: "Query",
+                    me: data?.register.user,
+                  },
+                });
+              },
+            });
+            const errors = response.data?.register.errors;
+            if (errors) return actions.setErrors(toErrorMap(errors)); // display error message to user.
+            router.push("/");
+          }}
+        >
+          {(props) => (
+            <Form>
+              <InputField
+                name="email"
+                placeholder="email"
+                label="Email"
+                type="email"
+              />
+              <InputField
+                name="username"
+                placeholder="username"
+                label="Username"
+              />
+              <InputField
+                name="password"
+                placeholder="password"
+                label="Password"
+                type="password"
+              />
+              <Button
+                mt={5}
+                colorScheme="teal"
+                isLoading={props.isSubmitting}
+                type="submit"
+              >
+                Submit
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      </Container>
+    </>
   );
 };
 
