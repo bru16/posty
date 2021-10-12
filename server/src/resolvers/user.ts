@@ -67,6 +67,7 @@ export class UserResolver {
         ],
       };
     }
+
     const errors = validateRegister(options);
     if (errors) {
       return { errors };
@@ -106,6 +107,7 @@ export class UserResolver {
           },
         ],
       };
+
     const passwordMatches = await argon2.verify(user.password, password);
     if (!passwordMatches)
       return {
@@ -132,7 +134,7 @@ export class UserResolver {
     }
   }
 
-  @Mutation(() => UserResponse) // user logs in user after successfully changed password.
+  @Mutation(() => UserResponse) // user logs in after successfully changed password.
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
@@ -160,6 +162,7 @@ export class UserResolver {
         ],
       };
     }
+
     const user = await User.findOne({ id: parseInt(userId) });
     if (!user) {
       return {
@@ -177,7 +180,7 @@ export class UserResolver {
     //login
     await redis.del(key); // deletes token, so its no valid anymore
     req.session.userId = user.id;
-    return { user: user };
+    return { user };
   }
 
   @Mutation(() => Boolean)
@@ -190,6 +193,7 @@ export class UserResolver {
       //email doesnt exist
       return true;
     }
+
     const token = v4();
     await redis.set(
       FORGET_PASSWORD_PREFIX + token,
