@@ -1,10 +1,13 @@
+import { AddIcon } from "@chakra-ui/icons";
 import {
+  Box,
   Button,
   Container,
   Flex,
   Heading,
-  Link,
   Stack,
+  Tag,
+  TagLeftIcon,
 } from "@chakra-ui/react";
 import NextLink from "next/link";
 import React from "react";
@@ -30,6 +33,7 @@ const Index = () => {
   };
 
   if (!loading && !data) return <div>something went wrong</div>;
+  if (loading && !data) return <LoadingSpinner />;
 
   return (
     <>
@@ -38,20 +42,21 @@ const Index = () => {
         <Flex mb={3} p={3} align="center">
           <Heading>Reddit</Heading>
           <NextLink href="/create-post">
-            <Link ml="auto">Create Post!</Link>
+            <Box ml="auto" cursor="pointer">
+              <Tag colorScheme="teal">
+                <TagLeftIcon boxSize="12px" as={AddIcon} />
+                Create Post!
+              </Tag>
+            </Box>
           </NextLink>
         </Flex>
-        {loading && !data ? (
-          <LoadingSpinner />
-        ) : (
-          <Stack spacing={8} mb={10}>
-            {data!.posts.posts.map((p) => (
-              <Flex p={3} shadow="md" borderWidth="1px" key={p.id}>
-                <Post post={p} />
-              </Flex>
-            ))}
-          </Stack>
-        )}
+        <Stack spacing={8} mb={10}>
+          {data!.posts.posts.map((p) => (
+            <Flex p={3} shadow="md" borderWidth="1px" key={p.id}>
+              <Post post={p} />
+            </Flex>
+          ))}
+        </Stack>
         {data && data.posts.hasMore && (
           <Flex justifyContent="center" p={4}>
             <Button onClick={handleFetchMore}>Load more...</Button>
