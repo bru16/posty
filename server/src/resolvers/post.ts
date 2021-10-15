@@ -106,7 +106,7 @@ export class PostResolver {
 
     const posts = await getConnection().query(
       `
-    select p.*,
+    SELECT p.*,
     json_build_object(
       'id', u.id,
       'username', u.username,
@@ -116,13 +116,13 @@ export class PostResolver {
     ) creator,
     ${
       req.session.userId
-        ? '(select value from vote where "userId" = $2 and "postId" = p.id) "voteStatus"'
+        ? '(SELECT value FROM vote WHERE "userId" = $2 and "postId" = p.id) "voteStatus"'
         : 'null as "voteStatus"'
     }
-    from post p
-    inner join public.user u on u.id = p."creatorId"
-    ${cursor ? `where p."created_at" < $${cursorIndex}` : ""}
-    order by p."created_at" DESC
+    FROM post p
+    INNER JOIN PUBLIC.user u on u.id = p."creatorId"
+    ${cursor ? `WHERE p."created_at" < $${cursorIndex}` : ""}
+    ORDER BY p."created_at" DESC
     limit $1
     `,
       replacements
@@ -142,8 +142,37 @@ export class PostResolver {
   }
 
   @Query(() => Post, { nullable: true })
-  async post(@Arg("id", () => Int) id: number): Promise<Post | undefined> {
-    return await Post.findOne(id, { relations: ["creator"] });
+  async post(
+    @Arg("id", () => Int) id: number,
+    @Ctx() { req }: MyContext
+  ): Promise<Post | undefined> {
+    const replacements: any[] = [id];
+    if (req.session.userId) {
+      replacements.push(req.session.userId);
+    }
+
+    const post = await getConnection().query(
+      `
+      SELECT p.*,p.id,
+      json_build_object(
+      'id', u.id,
+      'username', u.username,
+      'email', u.email,
+      'created_at', u.created_at,
+      'updated_at', u.updated_at
+      ) creator,
+      ${
+        req.session.userId
+          ? '(SELECT value FROM vote WHERE "userId" = $2 and "postId" = p.id) "voteStatus"'
+          : 'null as "voteStatus"'
+      }
+      FROM post p
+      INNER JOIN PUBLIC.user u on u.id = p."creatorId"
+      WHERE p.id = $1
+    `,
+      replacements
+    );
+    return post[0];
   }
 
   @Mutation(() => Post)
