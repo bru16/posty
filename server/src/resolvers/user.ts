@@ -17,13 +17,7 @@ import { validateRegister } from "../utils/validateRegister";
 import { RegisterInputFields } from "./RegisterInputFields";
 import { v4 } from "uuid";
 import { sendEmail } from "../utils/sendEmail";
-@ObjectType()
-class FieldError {
-  @Field()
-  field: string;
-  @Field()
-  message: string;
-}
+import { FieldError } from "../utils/classes";
 
 @ObjectType()
 class UserResponse {

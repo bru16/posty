@@ -1,11 +1,12 @@
 import { Box, Button, Container } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
-import React from "react";
+import React, { useState } from "react";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { useCreatePostMutation } from "../generated/graphql";
 import withApollo from "../utils/apolloServer";
+import { toErrorMap } from "../utils/toErrorMap";
 
 export const CreatePost: React.FC<{}> = ({}) => {
   const router = useRouter();
@@ -22,7 +23,7 @@ export const CreatePost: React.FC<{}> = ({}) => {
           initialValues={{ title: "", text: "" }}
           onSubmit={async (values, actions) => {
             try {
-              await createPost({
+              const response = await createPost({
                 variables: {
                   title: values.title,
                   text: values.text,
@@ -31,6 +32,9 @@ export const CreatePost: React.FC<{}> = ({}) => {
                   cache.evict({ fieldName: "posts" });
                 },
               });
+              const errors = response.data?.createPost.errors;
+              if (errors) return actions.setErrors(toErrorMap(errors));
+
               router.push("/");
             } catch (error) {
               router.push("/login");

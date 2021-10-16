@@ -1,6 +1,12 @@
 mutation CreatePost($title: String!, $text: String!) {
   createPost(title: $title, text: $text) {
-    title
-    text
+    errors {
+      message
+      field
+    }
+    post {
+      title
+      text
+    }
   }
 }

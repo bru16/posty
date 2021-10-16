@@ -80,6 +80,7 @@ export const VotePost: React.FC<VotePostProps> = ({
         onClick={() => handleVote(1)}
         isLoading={loadingState === "upvote-loading"}
         disabled={loadingState !== "no-loading"}
+        size="md"
       />
       {points}
       <IconButton
@@ -91,6 +92,7 @@ export const VotePost: React.FC<VotePostProps> = ({
         onClick={() => handleVote(-1)}
         isLoading={loadingState === "downvote-loading"}
         disabled={loadingState !== "no-loading"}
+        size="md"
       />
     </>
   );

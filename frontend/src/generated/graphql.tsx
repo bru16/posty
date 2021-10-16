@@ -14,6 +14,12 @@ export type Scalars = {
   Float: number;
 };
 
+export type CreatePostResponse = {
+  __typename?: 'CreatePostResponse';
+  errors?: Maybe<Array<FieldError>>;
+  post?: Maybe<Post>;
+};
+
 export type FieldError = {
   __typename?: 'FieldError';
   field: Scalars['String'];
@@ -23,7 +29,7 @@ export type FieldError = {
 export type Mutation = {
   __typename?: 'Mutation';
   vote: Scalars['Boolean'];
-  createPost: Post;
+  createPost: CreatePostResponse;
   updatePost?: Maybe<Post>;
   deletePost: Scalars['Boolean'];
   register: UserResponse;
@@ -156,7 +162,7 @@ export type CreatePostMutationVariables = Exact<{
 }>;
 
 
-export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'Post', title: string, text: string } };
+export type CreatePostMutation = { __typename?: 'Mutation', createPost: { __typename?: 'CreatePostResponse', errors?: Maybe<Array<{ __typename?: 'FieldError', message: string, field: string }>>, post?: Maybe<{ __typename?: 'Post', title: string, text: string }> } };
 
 export type DeletePostMutationVariables = Exact<{
   id: Scalars['Int'];
@@ -294,8 +300,14 @@ export type ChangePasswordMutationOptions = Apollo.BaseMutationOptions<ChangePas
 export const CreatePostDocument = gql`
     mutation CreatePost($title: String!, $text: String!) {
   createPost(title: $title, text: $text) {
-    title
-    text
+    errors {
+      message
+      field
+    }
+    post {
+      title
+      text
+    }
   }
 }
     `;

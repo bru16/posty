@@ -16,6 +16,8 @@ import { isAuth } from "../entity/middleware/isAuth";
 import { Post } from "../entity/Post";
 import { Vote } from "../entity/Vote";
 import { MyContext } from "../types";
+import { FieldError } from "../utils/classes";
+import { validateCreatePost } from "../utils/validateCreatePost";
 
 @ObjectType()
 class PaginatedPosts {
@@ -24,6 +26,15 @@ class PaginatedPosts {
 
   @Field()
   hasMore: boolean;
+}
+
+@ObjectType()
+class CreatePostResponse {
+  @Field(() => [FieldError], { nullable: true })
+  errors?: FieldError[];
+
+  @Field(() => Post, { nullable: true })
+  post?: Post;
 }
 
 @Resolver(Post)
@@ -175,18 +186,22 @@ export class PostResolver {
     return post[0];
   }
 
-  @Mutation(() => Post)
+  @Mutation(() => CreatePostResponse)
   @UseMiddleware(isAuth)
   async createPost(
     @Arg("title") title: string,
     @Arg("text") text: string,
     @Ctx() { req }: MyContext
-  ): Promise<Post> {
-    return Post.create({
+  ): Promise<CreatePostResponse> {
+    const errors = validateCreatePost(title, text);
+    if (errors) return { errors };
+
+    const post = await Post.create({
       title,
       text,
       creatorId: req.session.userId,
     }).save();
+    return { post };
   }
 
   @Mutation(() => Post, { nullable: true })

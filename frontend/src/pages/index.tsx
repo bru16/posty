@@ -38,13 +38,12 @@ const Index = () => {
   return (
     <>
       <NavBar />
-      <Container justifyContent="center" mt={10}>
-        <Flex mb={3} p={3} align="center">
-          <Heading>Reddit</Heading>
+      <Container justifyContent="center" mt={10} maxWidth="650px">
+        <Flex mb={3} p={3} align="center" justifyContent="center">
           <NextLink href="/create-post">
-            <Box ml="auto" cursor="pointer">
+            <Box cursor="pointer">
               <Tag colorScheme="teal">
-                <TagLeftIcon boxSize="12px" as={AddIcon} />
+                <TagLeftIcon boxSize="13px" as={AddIcon} />
                 Create Post!
               </Tag>
             </Box>
@@ -52,7 +51,13 @@ const Index = () => {
         </Flex>
         <Stack spacing={8} mb={10}>
           {data!.posts.posts.map((p) => (
-            <Flex p={3} shadow="md" borderWidth="1px" key={p.id}>
+            <Flex
+              p={4}
+              shadow="md"
+              borderWidth="1px"
+              key={p.id}
+              wordBreak="break-all"
+            >
               <Post post={p} />
             </Flex>
           ))}

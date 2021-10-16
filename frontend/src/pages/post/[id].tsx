@@ -38,9 +38,14 @@ const Post = () => {
   return (
     <>
       <NavBar />
-      <Container maxWidth="800px" borderWidth="2px" mt="10">
+      <Container
+        maxWidth="800px"
+        borderWidth="2px"
+        mt="10"
+        wordBreak="break-all"
+      >
         <Stack mt="10" spacing={8} mb={10}>
-          <Flex>
+          <Flex align="center">
             <Flex direction="column" align="center">
               <VotePost
                 id={data.post.id}
@@ -48,7 +53,7 @@ const Post = () => {
                 points={data.post.points}
               />
             </Flex>
-            <Heading>{data.post.title}</Heading>
+            <Heading ml="20px">{data.post.title}</Heading>
           </Flex>
           <Flex justifyContent="space-between">
             <Text color="gray">posted by: {data.post.creator.username}</Text>
