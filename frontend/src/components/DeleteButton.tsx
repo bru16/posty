@@ -13,11 +13,7 @@ import {
 import React, { useRef } from "react";
 import { useDeletePostMutation } from "../generated/graphql";
 
-interface DeleteButtonProps {
-  id: number;
-}
-
-export const DeleteButton: React.FC<DeleteButtonProps> = ({ id }) => {
+export const DeleteButton = ({ id }: { id: number }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [deletePost] = useDeletePostMutation();
   const toast = useToast();

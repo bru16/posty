@@ -4,7 +4,6 @@ import {
   Button,
   Container,
   Flex,
-  Heading,
   Stack,
   Tag,
   TagLeftIcon,
@@ -14,7 +13,7 @@ import React from "react";
 import { LoadingSpinner } from "../components/LoadingSpinner";
 import { NavBar } from "../components/NavBar";
 import { Post } from "../components/Post";
-import { usePostsQuery } from "../generated/graphql";
+import { useMeQuery, usePostsQuery } from "../generated/graphql";
 import withApollo from "../utils/apolloServer";
 
 const Index = () => {
@@ -22,6 +21,9 @@ const Index = () => {
     variables: { limit: 10, cursor: null },
     notifyOnNetworkStatusChange: true,
   });
+
+  const { data: meData } = useMeQuery();
+  const href = meData?.me ? "/create-post" : "/login";
 
   const handleFetchMore = () => {
     fetchMore({
@@ -40,7 +42,7 @@ const Index = () => {
       <NavBar />
       <Container justifyContent="center" mt={10} maxWidth="650px">
         <Flex mb={3} p={3} align="center" justifyContent="center">
-          <NextLink href="/create-post">
+          <NextLink href={href}>
             <Box cursor="pointer">
               <Tag colorScheme="teal">
                 <TagLeftIcon boxSize="13px" as={AddIcon} />

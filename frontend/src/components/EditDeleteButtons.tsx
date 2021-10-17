@@ -4,11 +4,7 @@ import NextLink from "next/link";
 import React from "react";
 import { DeleteButton } from "./DeleteButton";
 
-interface EditDeleteButtonsProps {
-  id: number;
-}
-
-export const EditDeleteButtons: React.FC<EditDeleteButtonsProps> = ({ id }) => {
+export const EditDeleteButtons = ({ id }: { id: number }) => {
   return (
     <>
       <DeleteButton id={id} />

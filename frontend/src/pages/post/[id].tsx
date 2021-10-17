@@ -6,11 +6,12 @@ import { NavBar } from "../../components/NavBar";
 import { VotePost } from "../../components/VotePost";
 import { usePostQuery } from "../../generated/graphql";
 import withApollo from "../../utils/apolloServer";
+import { calculateTime } from "../../utils/timeAgo";
 import { useGetIntId } from "../../utils/useGetIntId";
 
 const Post = () => {
   const id = useGetIntId();
-  const { data, loading, error } = usePostQuery({
+  const { data, loading } = usePostQuery({
     skip: id === -1,
     variables: {
       id,
@@ -20,20 +21,10 @@ const Post = () => {
   if (loading) return <LoadingSpinner />;
 
   if (!data?.post) {
-    return <div>d{error?.message}</div>;
+    return <Container>something went wrong</Container>;
   }
 
-  const secondsDifference =
-    (new Date().getTime() - +data.post.created_at) / 1000; // seconds of difference between when the post was created and current date.
-
-  let timeAgo = secondsDifference.toString();
-  if (secondsDifference < 60) {
-    timeAgo = Math.round(+timeAgo) + " seconds ago";
-  } else if (secondsDifference < 3600) {
-    timeAgo = Math.round(+timeAgo / 60) + " minutes ago"; // 1 hour
-  } else if (secondsDifference < 86400) {
-    timeAgo = Math.round(+timeAgo / 3600) + " hours ago";
-  } else timeAgo = Math.round(+timeAgo / 86400) + " days ago";
+  const timeAgo = calculateTime(data.post.created_at);
 
   return (
     <>

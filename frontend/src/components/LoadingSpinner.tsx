@@ -1,12 +1,7 @@
 import { Flex, Spinner } from "@chakra-ui/react";
 import React from "react";
 
-interface props {
-  noCenter?: boolean;
-}
-
-export const LoadingSpinner = ({ noCenter }: props) => {
-  if (noCenter) return <Spinner size="xl" />;
+export const LoadingSpinner = () => {
   return (
     <Flex
       alignItems="center"

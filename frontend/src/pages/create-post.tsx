@@ -1,14 +1,14 @@
 import { Box, Button, Container } from "@chakra-ui/react";
 import { Form, Formik } from "formik";
 import { useRouter } from "next/dist/client/router";
-import React, { useState } from "react";
+import React from "react";
 import { InputField } from "../components/InputField";
 import { NavBar } from "../components/NavBar";
 import { useCreatePostMutation } from "../generated/graphql";
 import withApollo from "../utils/apolloServer";
 import { toErrorMap } from "../utils/toErrorMap";
 
-export const CreatePost: React.FC<{}> = ({}) => {
+const CreatePost = () => {
   const router = useRouter();
   const [createPost] = useCreatePostMutation();
 
