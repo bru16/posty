@@ -3,7 +3,7 @@ import { Form, Formik } from "formik";
 import React, { useState } from "react";
 import EmailSend from "../components/EmailSend";
 import { InputField } from "../components/InputField";
-import { NavBar } from "../components/NavBar";
+import NavBar from "../components/NavBar";
 import { useForgotPasswordMutation } from "../generated/graphql";
 import withApollo from "../utils/apolloServer";
 
@@ -24,7 +24,7 @@ const forgotPassword = () => {
         </Box>
         <Formik
           initialValues={{ email: "" }}
-          onSubmit={async (values, actions) => {
+          onSubmit={async (values) => {
             await forgotPassword({
               variables: { email: values.email },
             });

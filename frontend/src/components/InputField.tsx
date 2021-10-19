@@ -15,7 +15,7 @@ type InputFieldProps = InputHTMLAttributes<HTMLInputElement> & {
 };
 
 export const InputField: React.FC<InputFieldProps> = (props) => {
-  let InputOrTextarea = props.textarea ? Textarea : Input;
+  const InputOrTextarea = props.textarea ? Textarea : Input;
   const [field, { error }] = useField(props);
   return (
     <FormControl isInvalid={Boolean(error)}>

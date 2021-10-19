@@ -2,7 +2,7 @@ import { Container, Flex, Heading } from "@chakra-ui/layout";
 import { Stack, Text } from "@chakra-ui/react";
 import React from "react";
 import { LoadingSpinner } from "../../components/LoadingSpinner";
-import { NavBar } from "../../components/NavBar";
+import NavBar from "../../components/NavBar";
 import { VotePost } from "../../components/VotePost";
 import { usePostQuery } from "../../generated/graphql";
 import withApollo from "../../utils/apolloServer";

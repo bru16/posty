@@ -11,7 +11,7 @@ import { NextPage } from "next";
 import { useRouter } from "next/dist/client/router";
 import React, { useState } from "react";
 import { InputField } from "../../components/InputField";
-import { NavBar } from "../../components/NavBar";
+import NavBar from "../../components/NavBar";
 import {
   MeDocument,
   MeQuery,

@@ -4,7 +4,7 @@ import { useRouter } from "next/dist/client/router";
 import NextLink from "next/link";
 import React from "react";
 import { InputField } from "../components/InputField";
-import { NavBar } from "../components/NavBar";
+import NavBar from "../components/NavBar";
 import { MeDocument, MeQuery, useLoginMutation } from "../generated/graphql";
 import withApollo from "../utils/apolloServer";
 import { toErrorMap } from "../utils/toErrorMap";

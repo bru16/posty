@@ -11,7 +11,7 @@ import {
 import NextLink from "next/link";
 import React from "react";
 import { LoadingSpinner } from "../components/LoadingSpinner";
-import { NavBar } from "../components/NavBar";
+import NavBar from "../components/NavBar";
 import { Post } from "../components/Post";
 import { useMeQuery, usePostsQuery } from "../generated/graphql";
 import withApollo from "../utils/apolloServer";
@@ -52,7 +52,7 @@ const Index = () => {
           </NextLink>
         </Flex>
         <Stack spacing={8} mb={10}>
-          {data!.posts.posts.map((p) => (
+          {data?.posts.posts.map((p) => (
             <Flex
               p={4}
               shadow="md"

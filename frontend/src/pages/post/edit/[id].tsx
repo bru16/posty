@@ -4,7 +4,7 @@ import { useRouter } from "next/dist/client/router";
 import React from "react";
 import { InputField } from "../../../components/InputField";
 import { LoadingSpinner } from "../../../components/LoadingSpinner";
-import { NavBar } from "../../../components/NavBar";
+import NavBar from "../../../components/NavBar";
 import {
   usePostQuery,
   useUpdatePostMutation,
@@ -12,7 +12,7 @@ import {
 import WithApollo from "../../../utils/apolloServer";
 import { useGetIntId } from "../../../utils/useGetIntId";
 
-const EditPost = ({}) => {
+const EditPost = () => {
   const id = useGetIntId();
   const router = useRouter();
   const { data, loading } = usePostQuery({
@@ -37,7 +37,7 @@ const EditPost = ({}) => {
         </Box>
         <Formik
           initialValues={{ title: data.post.title, text: data.post.text }}
-          onSubmit={async (values, actions) => {
+          onSubmit={async (values) => {
             await updatePost({ variables: { id, ...values } });
             router.back();
           }}

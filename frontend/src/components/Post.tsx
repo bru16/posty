@@ -30,9 +30,9 @@ export const Post: React.FC<PostProps> = ({ post }) => {
         <Flex align="center">
           <Text mt={4}>{post.textShortened}</Text>
           {meData?.me?.id === post.creatorId && (
-            <Box ml="auto">
+            <Flex ml="auto">
               <EditDeleteButtons id={post.id} />
-            </Box>
+            </Flex>
           )}
         </Flex>
       </Box>
