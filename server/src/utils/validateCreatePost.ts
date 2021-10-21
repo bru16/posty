@@ -8,11 +8,11 @@ export const validateCreatePost = (title: string, text: string) => {
     ];
   }
 
-  if (text.length <= 30) {
+  if (text.length <= 50) {
     return [
       {
         field: "text",
-        message: "text must be greater than 30 characters",
+        message: "text must be greater than 50 characters",
       },
     ];
   }

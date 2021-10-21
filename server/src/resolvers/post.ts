@@ -139,13 +139,6 @@ export class PostResolver {
       replacements
     );
 
-    /* const queryBuilder = getConnection()
-      .getRepository(Post)
-      .createQueryBuilder("post")
-      .innerJoinAndSelect("post.creator", "creator")
-      .orderBy("post.created_at", "DESC")
-      .take(realLimit + 1); // take 1 more post to see if there's more posts to fetch. */
-
     return {
       posts: posts.slice(0, realLimit),
       hasMore: posts.length === realLimit + 1,

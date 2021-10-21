@@ -9,14 +9,14 @@
    "logging": true,
    "entities": ["dist/entity/**/*.js"],
    "migrations": [
-      "dist/migration/**/*.ts"
+      "dist/migrations/**/*.js"
    ],
    "subscribers": [
       "dist/subscriber/**/*.js"
    ],
    "cli": {
       "entitiesDir": "src/entity",
-      "migrationsDir": "src/migration",
+      "migrationsDir": "src/migrations",
       "subscribersDir": "src/subscriber"
    }
 }

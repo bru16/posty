@@ -16,7 +16,7 @@ import { COOKIE_NAME } from "./constants";
 async function bootstrap() {
   try {
     await createConnection();
-    // await connection.runMigrations();
+    //await connection.runMigrations();
     const app = express();
     app.use(
       cors({
