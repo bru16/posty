@@ -31,9 +31,10 @@ const Post = () => {
       <NavBar />
       <Container
         maxWidth="800px"
-        borderWidth="2px"
+        borderWidth="3px"
         mt="10"
         wordBreak="break-all"
+        shadow="lg"
       >
         <Stack mt="10" spacing={8} mb={10}>
           <Flex align="center">

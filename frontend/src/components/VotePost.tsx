@@ -1,5 +1,5 @@
 import { IconButton } from "@chakra-ui/button";
-import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
+import { ArrowDownIcon, ArrowUpIcon } from "@chakra-ui/icons";
 import gql from "graphql-tag";
 import router from "next/dist/client/router";
 import React, { useState } from "react";
@@ -75,7 +75,7 @@ export const VotePost: React.FC<VotePostProps> = ({
         variant="solid"
         colorScheme="black"
         aria-label="UpVote"
-        icon={<ChevronUpIcon />}
+        icon={<ArrowUpIcon />}
         onClick={() => handleVote(1)}
         isLoading={loadingState === "upvote-loading"}
         disabled={loadingState !== "no-loading"}
@@ -87,7 +87,7 @@ export const VotePost: React.FC<VotePostProps> = ({
         variant="solid"
         colorScheme="black"
         aria-label="DownVote"
-        icon={<ChevronDownIcon />}
+        icon={<ArrowDownIcon />}
         onClick={() => handleVote(-1)}
         isLoading={loadingState === "downvote-loading"}
         disabled={loadingState !== "no-loading"}

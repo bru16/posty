@@ -10,6 +10,7 @@ import {
   useUpdatePostMutation,
 } from "../../../generated/graphql";
 import WithApollo from "../../../utils/apolloServer";
+import { toErrorMap } from "../../../utils/toErrorMap";
 import { useGetIntId } from "../../../utils/useGetIntId";
 
 const EditPost = () => {
@@ -37,8 +38,10 @@ const EditPost = () => {
         </Box>
         <Formik
           initialValues={{ title: data.post.title, text: data.post.text }}
-          onSubmit={async (values) => {
-            await updatePost({ variables: { id, ...values } });
+          onSubmit={async (values, actions) => {
+            const response = await updatePost({ variables: { id, ...values } });
+            const errors = response.data?.updatePost?.errors;
+            if (errors) return actions.setErrors(toErrorMap(errors));
             router.back();
           }}
         >

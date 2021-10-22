@@ -35,6 +35,7 @@ const Index = () => {
   };
 
   if (!loading && !data) return <div>something went wrong</div>;
+
   if (loading && !data) return <LoadingSpinner />;
 
   return (

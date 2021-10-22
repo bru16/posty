@@ -30,7 +30,7 @@ export type Mutation = {
   __typename?: 'Mutation';
   vote: Scalars['Boolean'];
   createPost: CreatePostResponse;
-  updatePost?: Maybe<Post>;
+  updatePost?: Maybe<CreatePostResponse>;
   deletePost: Scalars['Boolean'];
   register: UserResponse;
   login: UserResponse;
@@ -205,7 +205,7 @@ export type UpdatePostMutationVariables = Exact<{
 }>;
 
 
-export type UpdatePostMutation = { __typename?: 'Mutation', updatePost?: Maybe<{ __typename?: 'Post', id: number, title: string, text: string, textShortened: string }> };
+export type UpdatePostMutation = { __typename?: 'Mutation', updatePost?: Maybe<{ __typename?: 'CreatePostResponse', errors?: Maybe<Array<{ __typename?: 'FieldError', message: string, field: string }>>, post?: Maybe<{ __typename?: 'Post', id: number, title: string, text: string, textShortened: string }> }> };
 
 export type VoteMutationVariables = Exact<{
   value: Scalars['Int'];
@@ -512,10 +512,16 @@ export type RegisterMutationOptions = Apollo.BaseMutationOptions<RegisterMutatio
 export const UpdatePostDocument = gql`
     mutation UpdatePost($id: Int!, $title: String!, $text: String!) {
   updatePost(id: $id, title: $title, text: $text) {
-    id
-    title
-    text
-    textShortened
+    errors {
+      message
+      field
+    }
+    post {
+      id
+      title
+      text
+      textShortened
+    }
   }
 }
     `;
