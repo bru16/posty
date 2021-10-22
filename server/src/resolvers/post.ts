@@ -197,19 +197,22 @@ export class PostResolver {
     return { post };
   }
 
-  @Mutation(() => Post, { nullable: true })
+  @Mutation(() => CreatePostResponse, { nullable: true })
   @UseMiddleware(isAuth)
   async updatePost(
     @Arg("text") text: string,
     @Arg("id", () => Int) id: number,
     @Arg("title") title: string,
     @Ctx() { req }: MyContext
-  ): Promise<Post | null> {
+  ): Promise<CreatePostResponse | null> {
     const post = await Post.findOne({ id, creatorId: req.session.userId });
     if (!post) return null;
+    const errors = validateCreatePost(title, text);
+    if (errors) return { errors };
     post.text = text;
     post.title = title;
-    return await Post.save(post);
+    await Post.save(post);
+    return { post };
   }
 
   @Mutation(() => Boolean)
