@@ -12,17 +12,22 @@ import {
 import WithApollo from "../../../utils/apolloServer";
 import { toErrorMap } from "../../../utils/toErrorMap";
 import { useGetIntId } from "../../../utils/useGetIntId";
+import { useIsAuthorized } from "../../../utils/useIsAuthorized";
 
 const EditPost = () => {
+  useIsAuthorized();
   const id = useGetIntId();
   const router = useRouter();
+
   const { data, loading } = usePostQuery({
     skip: id === -1,
     variables: {
       id,
     },
   });
+
   const [updatePost] = useUpdatePostMutation();
+
   if (loading) return <LoadingSpinner />;
 
   if (!data?.post) {

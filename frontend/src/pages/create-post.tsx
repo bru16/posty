@@ -3,8 +3,10 @@ import React from "react";
 import CreatePostForm from "../components/CreatePostForm";
 import NavBar from "../components/NavBar";
 import withApollo from "../utils/apolloServer";
+import { useIsAuthorized } from "../utils/useIsAuthorized";
 
 const CreatePost = () => {
+  useIsAuthorized();
   return (
     <>
       <NavBar />
