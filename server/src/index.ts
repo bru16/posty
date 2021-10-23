@@ -20,20 +20,21 @@ async function bootstrap() {
     const app = express();
     app.use(
       cors({
-        origin: "http://localhost:3000",
+        origin: process.env.CORS_ORIGIN,
         credentials: true,
       })
     );
 
     const RedisStore = connectRedis(session);
-    const redis = new Redis();
+    const redis = new Redis(process.env.REDIS_URL);
 
+    app.set("proxy", 1);
     app.use(
       session({
         name: COOKIE_NAME,
         store: new RedisStore({ client: redis, disableTouch: true }),
         saveUninitialized: false,
-        secret: "sdad32qd2rd333u73bm7",
+        secret: process.env.SESSION_SECRET!,
         resave: false,
         cookie: {
           httpOnly: true,

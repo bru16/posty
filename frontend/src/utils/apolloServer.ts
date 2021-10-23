@@ -8,7 +8,7 @@ export const client = (ctx: NextPageContext) =>
   new ApolloClient({
     link: createHttpLink({
       credentials: "include",
-      uri: "http://localhost:4000/graphql",
+      uri: process.env.NEXT_PUBLIC_API_URL as string,
       headers: {
         cookie: (isServer() ? ctx?.req?.headers.cookie : undefined) || "",
       },
