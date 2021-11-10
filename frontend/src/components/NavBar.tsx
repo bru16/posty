@@ -28,7 +28,7 @@ const NavBar = () => {
       <Flex mr="auto">
         <NextLink href="/">
           <Link>
-            <Heading>Reddit</Heading>
+            <Heading>Posty</Heading>
           </Link>
         </NextLink>
       </Flex>
